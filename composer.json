@@ -1,0 +1,19 @@
+{
+    "name": "getdkan/file-fetcher",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^8.2"
+    },
+    "authors": [
+        {
+            "name": "fmizzell",
+            "email": "fmizzell.dev@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "FileFetcher\\": "src/"
+        }
+    },
+    "require": {}
+}
