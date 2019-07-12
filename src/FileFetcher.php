@@ -2,7 +2,26 @@
 
 namespace FileFetcher;
 
-class FileFetcher {
+use Procrastinator\Job\Job;
+
+class FileFetcher extends Job {
+
+  public function __construct($filePath)
+  {
+    parent::__construct();
+    $this->getResult()->setData(json_encode((object) ['file_path' => $filePath]));
+  }
+
+  protected function runIt()
+  {
+    $result = $this->getResult();
+    $data = json_decode($result->getData());
+    $location = $this->fetch($data->file_path);
+    $data->location = $location;
+    $result->setData(json_encode($data));
+    return $result;
+  }
+
 
   /**
    * Tests if the file want to use is usable attempt to make it usable.
@@ -14,7 +33,7 @@ class FileFetcher {
    *
    * @throws \Exception If fails to get a usable file.
    */
-  public function fetch($filePath) {
+  private function fetch($filePath) {
     try {
 
       // Try to download the file some other way.

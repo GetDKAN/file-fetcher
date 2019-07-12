@@ -15,5 +15,7 @@
             "FileFetcher\\": "src/"
         }
     },
-    "require": {}
+    "require": {
+        "getdkan/procrastinator": ">=1.0.0"
+    }
 }
