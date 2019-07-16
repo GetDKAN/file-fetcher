@@ -3,15 +3,14 @@
 
 class FileFetcherTest extends \PHPUnit\Framework\TestCase
 {
-  private $finalFilePaths = [
-    "/tmp/sacramentorealestatetransactions.csv"
-  ];
 
   public function testRemote() {
+    // https://drive.google.com/uc?export=download&confirm=-NkI&id=1-9N00dZkOipIAkXMl2D0cdWaVlqfF0E5
     $fetcher = new \FileFetcher\FileFetcher("http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv");
     $result = $fetcher->run();
     $data = json_decode($result->getData());
-    $this->assertEquals($this->finalFilePaths[0], $data->location);
+    $this->assertEquals("/tmp/sacramentorealestatetransactions.csv", $data->destination);
+    $this->assertTrue($data->temporary);
   }
 
   public function testLocal() {
@@ -19,21 +18,40 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
     $fetcher = new \FileFetcher\FileFetcher($local_file);
     $result = $fetcher->run();
     $data = json_decode($result->getData());
-    $this->assertEquals($local_file, $data->location);
+    $this->assertEquals($local_file, $data->destination);
+    $this->assertFalse($data->temporary);
   }
 
-  public function testNotAFile() {
-    $fetcher = new \FileFetcher\FileFetcher("http://nope.nxwd/ox.tsv");
-    $result = $fetcher->run();
-    $this->assertEquals($result->getStatus(), \Procrastinator\Result::ERROR);
-    $this->assertEquals($result->getError(), "Unable to fetch http://nope.nxwd/ox.tsv. Reason: SplFileObject::__construct(): php_network_getaddresses: getaddrinfo failed: Name or service not known");
+  public function testTimeOut() {
+    $fetcher = new \FileFetcher\FileFetcher("https://dkan-default-content-files.s3.amazonaws.com/2_mb_sample.csv");
+    $file_size = $fetcher->getStateProperty('total_bytes');
+    $this->assertLessThan($file_size, $fetcher->getStateProperty('total_bytes_copied'));
+
+    $fetcher->setTimeLimit(1);
+    $fetcher->run();
+    $this->assertLessThan($file_size, $fetcher->getStateProperty('total_bytes_copied'));
+    $this->assertGreaterThan(0, $fetcher->getStateProperty('total_bytes_copied'));
+    $this->assertEquals($fetcher->getResult()->getStatus(), \Procrastinator\Result::STOPPED);
+
+    $fetcher->setTimeLimit(PHP_INT_MAX);
+    $fetcher->run();
+    $this->assertEquals($file_size, $fetcher->getStateProperty('total_bytes_copied'));
+    $this->assertEquals(filesize("/tmp/2_mb_sample.csv"), $fetcher->getStateProperty('total_bytes_copied'));
+    $this->assertEquals($fetcher->getResult()->getStatus(), \Procrastinator\Result::DONE);
   }
 
   public function tearDown(): void
   {
     parent::tearDown();
-    if (file_exists($this->finalFilePaths[0])) {
-      unlink($this->finalFilePaths[0]);
+    $files = [
+      "/tmp/2_mb_sample.csv",
+      "/tmp/sacramentorealestatetransactions.csv"
+    ];
+
+    foreach ($files as $file) {
+      if (file_exists($file)) {
+        unlink($file);
+      }
     }
   }
 }

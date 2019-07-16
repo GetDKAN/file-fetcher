@@ -3,101 +3,177 @@
 namespace FileFetcher;
 
 use Procrastinator\Job\Job;
+use Procrastinator\Result;
 
 class FileFetcher extends Job {
+
+  private $chunkSizeInBytes = (1024 * 100);
+  private $timeLimit;
 
   public function __construct($filePath)
   {
     parent::__construct();
-    $this->getResult()->setData(json_encode((object) ['file_path' => $filePath]));
+
+    $state = [
+      'source' => $filePath,
+      'total_bytes_copied' => 0
+    ];
+
+    $file = new \SplFileObject($filePath);
+
+    $state['temporary'] = !$file->isFile();
+    $state['destination'] = $file->isFile() ? $filePath : $this->getTemporaryFilePath($filePath);
+
+    if (!$file->isFile() && $this->serverIsNotCompatible($filePath)) {
+      throw new \Exception("The server hosting the file does not support ranged requests.");
+    }
+
+    $state['total_bytes'] = $file->isFile() ? $file->getSize() : $this->getRemoteFileSize($filePath);
+
+    $this->setState($state);
+  }
+
+  public function setTimeLimit($seconds)
+  {
+    $this->timeLimit = $seconds;
+  }
+
+  public function getState() {
+    return (array) json_decode($this->getResult()->getData());
+  }
+
+  public function getStateProperty($property) {
+    return $this->getState()[$property];
   }
 
   protected function runIt()
   {
-    $result = $this->getResult();
-    $data = json_decode($result->getData());
-    $location = $this->fetch($data->file_path);
-    $data->location = $location;
-    $result->setData(json_encode($data));
+    try {
+      $this->copy();
+      $result = $this->getResult();
+      $result->setStatus(Result::DONE);
+    }
+    catch (FileCopyInterruptedException $e) {
+      $result = $this->getResult();
+      $result->setStatus(Result::STOPPED);
+    }
+
     return $result;
   }
 
+  private function serverIsNotCompatible($url) {
+    $headers = $this->getHeaders($url);
 
-  /**
-   * Tests if the file want to use is usable attempt to make it usable.
-   *
-   * @param string $filePath
-   *   file.
-   *
-   * @return string usable file path,
-   *
-   * @throws \Exception If fails to get a usable file.
-   */
-  private function fetch($filePath) {
-    try {
-
-      // Try to download the file some other way.
-      // using this method to allow for custom scheme handlers.
-      $source = $this->getFileObject($filePath);
-
-      // Is on local file system.
-      if ($source->isFile()) {
-        return $filePath;
-      }
-
-      $pieces = explode("/", $filePath);
-      $file_name = end($pieces);
-      $tmpFile = $this->getTemporaryFile($file_name);
-      $dest    = $this->getFileObject($tmpFile, 'w');
-
-      $this->fileCopy($source, $dest);
-
-      return $tmpFile;
-    } catch (\Exception $e) {
-      // Failed to get the file.
-      throw new \Exception("Unable to fetch {$filePath}. Reason: " . $e->getMessage(), 0, $e);
+    if(!isset($headers['Accept-Ranges']) || !isset($headers['Content-Length'])) {
+      return TRUE;
     }
+
+    return FALSE;
   }
 
-  /**
-   *
-   * @param string $filePath
-   * @param string $filePath
-   * @return \SplFileObject
-   */
-  private function getFileObject($filePath, $mode = 'r') {
-    return new \SplFileObject($filePath, $mode);
+  private function getRemoteFileSize($url) {
+    $headers = $this->getHeaders($url);
+    return $headers['Content-Length'];
   }
 
+  private function getHeaders($url) {
+    $ch = curl_init();
+    curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt ($ch, CURLOPT_URL, $url);
+    curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 20);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_NOBODY, true);
+
+    $headers = $this->parseHeaders(curl_exec ($ch));
+    curl_close ($ch);
+    return $headers;
+  }
+
+  private function parseHeaders($string) {
+    $headers = [];
+    $lines = explode(PHP_EOL, $string);
+    foreach ($lines as $line) {
+      $line = trim($line);
+      $parts = explode(":", $line);
+      if (count($parts) > 1) {
+        $key = array_shift($parts);
+        $value = trim(implode(":", $parts));
+        $headers[$key] = $value;
+      }
+      else {
+
+        if (!empty($value)) {
+          $headers[] = $value;
+        }
+      }
+    }
+    return $headers;
+  }
+
+
   /**
-   *
-   * @param \SplFileObject $source
-   * @param \SplFileObject $dest
-   * @return int
-   * @throws RuntimeException If either read or write fails
+   * Copy the remote file locally.
    */
-  private function fileCopy(\SplFileObject $source, \SplFileObject $dest) {
+  private function copy() {
 
-    $total = 0;
-    while ($source->valid()) {
+    if ($this->getStateProperty('temporary') == FALSE) {
+      return;
+    }
 
-      // Read a large enough frame to reduce overheads.
-      $read = $source->fread(128 * 1024);
+    $destination_file = $this->getStateProperty('destination');
+    $time_limit = ($this->timeLimit) ? time() + $this->timeLimit : time() + PHP_INT_MAX;
+    $total = $this->getStateProperty('total_bytes_copied');
 
-      if (FALSE === $read) {
-        throw new \RuntimeException("Failed to read from source " . $source->getPath());
+    while ($chunk = $this->getChunk()) {
+
+      if (!file_exists($destination_file)) {
+        $bytesWritten = file_put_contents($destination_file, $chunk);
+      }
+      else{
+        $bytesWritten = file_put_contents($destination_file, $chunk, FILE_APPEND);
       }
 
-      $bytesWritten = $dest->fwrite($read);
-
-      if ($bytesWritten !== strlen($read)) {
-        throw new \RuntimeException("Failed to write to destination " . $dest->getPath());
+      if ($bytesWritten !== strlen($chunk)) {
+        throw new \RuntimeException("Unable to fetch {$this->setStateProperty('source')}. Reason: Failed to write to destination " . $dest->getPath(), 0);
       }
 
       $total += $bytesWritten;
+      $this->setStateProperty('total_bytes_copied', $total);
+
+      if (time() > $time_limit) {
+        $this->setStateProperty('total_bytes_copied', $total);
+        throw new FileCopyInterruptedException("Stopped copying file after {$total} bytes. Time limit of {$this->timeLimit} second(s) reached.");
+      }
+    }
+  }
+
+  private function getChunk() {
+    $url = $this->getStateProperty('source');
+    $start = $this->getStateProperty('total_bytes_copied');
+    $end = $start + $this->chunkSizeInBytes;
+
+    if ($end > $this->getStateProperty('total_bytes')) {
+      $end = $this->getStateProperty('total_bytes');
     }
 
-    return $total;
+    if ($start == $end) {
+      return FALSE;
+    }
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RANGE, "{$start}-{$end}");
+    curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
+  }
+
+  private function getTemporaryFilePath($sourceFileUrl) {
+    $pieces = explode("/", $sourceFileUrl);
+    $file_name = end($pieces);
+    return $this->getTemporaryFile($file_name);
   }
 
   /**
@@ -130,4 +206,13 @@ class FileFetcher extends Job {
     return preg_replace('~[^a-z0-9.]+~', '_', strtolower($string));
   }
 
+  private function setState($state) {
+    $this->getResult()->setData(json_encode($state));
+  }
+
+  public function setStateProperty($property, $value) {
+    $state = $this->getState();
+    $state[$property] = $value;
+    $this->setState($state);
+  }
 }
