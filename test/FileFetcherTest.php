@@ -23,7 +23,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
   }
 
   public function testTimeOut() {
-    $fetcher = new \FileFetcher\FileFetcher("https://dkan-default-content-files.s3.amazonaws.com/2_mb_sample.csv");
+    $fetcher = new \FileFetcher\FileFetcher("https://dkan-default-content-files.s3.amazonaws.com/5_mb_sample.csv");
     $file_size = $fetcher->getStateProperty('total_bytes');
     $this->assertLessThan($file_size, $fetcher->getStateProperty('total_bytes_copied'));
 
@@ -36,7 +36,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
     $fetcher->setTimeLimit(PHP_INT_MAX);
     $fetcher->run();
     $this->assertEquals($file_size, $fetcher->getStateProperty('total_bytes_copied'));
-    $this->assertEquals(filesize("/tmp/2_mb_sample.csv"), $fetcher->getStateProperty('total_bytes_copied'));
+    $this->assertEquals(filesize("/tmp/5_mb_sample.csv"), $fetcher->getStateProperty('total_bytes_copied'));
     $this->assertEquals($fetcher->getResult()->getStatus(), \Procrastinator\Result::DONE);
   }
 
@@ -44,7 +44,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
   {
     parent::tearDown();
     $files = [
-      "/tmp/2_mb_sample.csv",
+      "/tmp/5_mb_sample.csv",
       "/tmp/sacramentorealestatetransactions.csv"
     ];
 
