@@ -4,6 +4,8 @@
 class FileFetcherTest extends \PHPUnit\Framework\TestCase
 {
 
+  private $sampleCsvSize = 50;
+
   public function testRemote() {
     // https://drive.google.com/uc?export=download&confirm=-NkI&id=1-9N00dZkOipIAkXMl2D0cdWaVlqfF0E5
     $fetcher = new \FileFetcher\FileFetcher("http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv");
@@ -23,7 +25,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
   }
 
   public function testTimeOut() {
-    $fetcher = new \FileFetcher\FileFetcher("https://dkan-default-content-files.s3.amazonaws.com/50_mb_sample.csv");
+    $fetcher = new \FileFetcher\FileFetcher("https://dkan-default-content-files.s3.amazonaws.com/{$this->sampleCsvSize}_mb_sample.csv");
     $file_size = $fetcher->getStateProperty('total_bytes');
     $this->assertLessThan($file_size, $fetcher->getStateProperty('total_bytes_copied'));
 
@@ -33,18 +35,21 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
     $this->assertGreaterThan(0, $fetcher->getStateProperty('total_bytes_copied'));
     $this->assertEquals($fetcher->getResult()->getStatus(), \Procrastinator\Result::STOPPED);
 
-    $fetcher->setTimeLimit(PHP_INT_MAX);
-    $fetcher->run();
-    $this->assertEquals($file_size, $fetcher->getStateProperty('total_bytes_copied'));
-    $this->assertEquals(filesize("/tmp/50_mb_sample.csv"), $fetcher->getStateProperty('total_bytes_copied'));
-    $this->assertEquals($fetcher->getResult()->getStatus(), \Procrastinator\Result::DONE);
+    $json = json_encode($fetcher);
+    $fetcher2 = \FileFetcher\FileFetcher::hydrate($json);
+
+    $fetcher2->setTimeLimit(PHP_INT_MAX);
+    $fetcher2->run();
+    $this->assertEquals($file_size, $fetcher2->getStateProperty('total_bytes_copied'));
+    $this->assertEquals(filesize("/tmp/{$this->sampleCsvSize}_mb_sample.csv"), $fetcher2->getStateProperty('total_bytes_copied'));
+    $this->assertEquals($fetcher2->getResult()->getStatus(), \Procrastinator\Result::DONE);
   }
 
   public function tearDown(): void
   {
     parent::tearDown();
     $files = [
-      "/tmp/50_mb_sample.csv",
+      "/tmp/{$this->sampleCsvSize}_mb_sample.csv",
       "/tmp/sacramentorealestatetransactions.csv"
     ];
 

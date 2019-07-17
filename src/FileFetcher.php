@@ -5,7 +5,7 @@ namespace FileFetcher;
 use Procrastinator\Job\Job;
 use Procrastinator\Result;
 
-class FileFetcher extends Job {
+class FileFetcher extends Job implements \JsonSerializable {
 
   private $chunkSizeInBytes = (1024 * 100);
   private $timeLimit;
@@ -215,4 +215,30 @@ class FileFetcher extends Job {
     $state[$property] = $value;
     $this->setState($state);
   }
+
+  public function jsonSerialize()
+  {
+    return (object) ['timeLimit' => $this->timeLimit, 'result' => $this->getResult()];
+  }
+
+  public static function hydrate($json) {
+    $data = json_decode($json);
+
+    $reflector = new \ReflectionClass(self::class);
+    $object = $reflector->newInstanceWithoutConstructor();
+
+    $reflector = new \ReflectionClass($object);
+
+    $p = $reflector->getProperty('timeLimit');
+    $p->setAccessible(true);
+    $p->setValue($object, $data->timeLimit);
+
+    $class = $reflector->getParentClass();
+    $p = $class->getProperty('result');
+    $p->setAccessible(true);
+    $p->setValue($object, Result::hydrate(json_encode($data->result)));
+
+    return $object;
+  }
+
 }
