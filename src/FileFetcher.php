@@ -5,7 +5,8 @@ namespace FileFetcher;
 use Procrastinator\Job\Job;
 use Procrastinator\Result;
 
-class FileFetcher extends Job implements \JsonSerializable {
+class FileFetcher extends Job 
+{
 
   private $chunkSizeInBytes = (1024 * 100);
   private $timeLimit;
@@ -36,14 +37,6 @@ class FileFetcher extends Job implements \JsonSerializable {
   public function setTimeLimit($seconds)
   {
     $this->timeLimit = $seconds;
-  }
-
-  public function getState() {
-    return (array) json_decode($this->getResult()->getData());
-  }
-
-  public function getStateProperty($property) {
-    return $this->getState()[$property];
   }
 
   protected function runIt()
