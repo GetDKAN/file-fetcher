@@ -12,11 +12,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "FileFetcher\\": "src/"
+            "FileFetcher\\": "src/",
+            "FileFetcherTest\\": "test/"
         }
     },
     "require": {
-        "getdkan/procrastinator": "~1.0.1",
+        "getdkan/procrastinator": "~1.0.2",
         "ext-curl": "*"
     }
 }
