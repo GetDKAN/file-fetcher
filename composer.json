@@ -12,7 +12,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "FileFetcher\\": "src/"
+            "FileFetcher\\": "src/",
+            "FileFetcherTest\\": "test/"
         }
     },
     "require": {
