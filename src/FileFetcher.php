@@ -7,17 +7,18 @@ use Procrastinator\Result;
 
 class FileFetcher extends Job
 {
-
+    private $temporaryDirectory;
     private $chunkSizeInBytes = (1024 * 100);
-    private $timeLimit;
 
-    public function __construct($filePath)
+    public function __construct($filePath, $temporaryDirectory = "/tmp")
     {
         parent::__construct();
 
+        $this->temporaryDirectory = $temporaryDirectory;
+
         $state = [
-        'source' => $filePath,
-        'total_bytes_copied' => 0
+          'source' => $filePath,
+          'total_bytes_copied' => 0
         ];
 
         $file = new \SplFileObject($filePath);
@@ -31,12 +32,11 @@ class FileFetcher extends Job
 
         $state['total_bytes'] = $file->isFile() ? $file->getSize() : $this->getRemoteFileSize($filePath);
 
-        $this->setState($state);
-    }
+        if (file_exists($state['destination'])) {
+            $state['total_bytes_copied'] = filesize($state['destination']);
+        }
 
-    public function setTimeLimit($seconds)
-    {
-        $this->timeLimit = $seconds;
+        $this->setState($state);
     }
 
     protected function runIt()
@@ -116,8 +116,10 @@ class FileFetcher extends Job
         }
 
         $destination_file = $this->getStateProperty('destination');
-        $time_limit = ($this->timeLimit) ? time() + $this->timeLimit : time() + PHP_INT_MAX;
         $total = $this->getStateProperty('total_bytes_copied');
+
+        $time_limit = ($this->getTimeLimit()) ? time() + $this->getTimeLimit() : time() + PHP_INT_MAX;
+
 
         while ($chunk = $this->getChunk()) {
             if (!file_exists($destination_file)) {
@@ -128,8 +130,8 @@ class FileFetcher extends Job
 
             if ($bytesWritten !== strlen($chunk)) {
                 throw new \RuntimeException(
-                    "Unable to fetch {$this->setStateProperty('source')}. " .
-                    " Reason: Failed to write to destination " . $dest->getPath(),
+                    "Unable to fetch {$this->getStateProperty('source')}. " .
+                    " Reason: Failed to write to destination " . $destination_file,
                     0
                 );
             }
@@ -141,7 +143,7 @@ class FileFetcher extends Job
                 $this->setStateProperty('total_bytes_copied', $total);
                 throw new FileCopyInterruptedException(
                     "Stopped copying file after {$total} bytes. Time limit of " .
-                    "{$this->timeLimit} second(s) reached."
+                    "{$this->getTimeLimit()} second(s) reached."
                 );
             }
         }
@@ -198,7 +200,7 @@ class FileFetcher extends Job
    */
     private function getTemporaryDirectory()
     {
-        return "/tmp";
+        return $this->temporaryDirectory;
     }
 
   /**
@@ -225,7 +227,7 @@ class FileFetcher extends Job
 
     public function jsonSerialize()
     {
-        return (object) ['timeLimit' => $this->timeLimit, 'result' => $this->getResult()];
+        return (object) ['timeLimit' => $this->getTimeLimit(), 'result' => $this->getResult(), 'temporaryDirectory' => $this->temporaryDirectory];
     }
 
     public static function hydrate($json)
@@ -237,14 +239,17 @@ class FileFetcher extends Job
 
         $reflector = new \ReflectionClass($object);
 
-        $p = $reflector->getProperty('timeLimit');
+        $p = $reflector->getParentClass()->getProperty('timeLimit');
         $p->setAccessible(true);
         $p->setValue($object, $data->timeLimit);
 
-        $class = $reflector->getParentClass();
-        $p = $class->getProperty('result');
+        $p = $reflector->getParentClass()->getProperty('result');
         $p->setAccessible(true);
         $p->setValue($object, Result::hydrate(json_encode($data->result)));
+
+        $p = $reflector->getProperty('temporaryDirectory');
+        $p->setAccessible(true);
+        $p->setValue($object, $data->temporaryDirectory);
 
         return $object;
     }
