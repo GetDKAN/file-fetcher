@@ -170,17 +170,16 @@ class FileFetcher extends Job
         $from = $this->getStateProperty('source');
         $to = $this->getStateProperty('destination');
 
-      # 1 meg at a time, you can adjust this.
-        $buffer_size = 1048576;
-        $ret = 0;
+        $bufferSize = 1048576;
+        $bytesCopied = 0;
         $fin = fopen($from, "rb");
         $fout = fopen($to, "w");
         while (!feof($fin)) {
-            $ret += fwrite($fout, fread($fin, $buffer_size));
+            $bytesCopied += fwrite($fout, fread($fin, $bufferSize));
         }
         fclose($fin);
         fclose($fout);
-        $this->setStateProperty('total_bytes_copied', $ret);
+        $this->setStateProperty('total_bytes_copied', $bytesCopied);
     }
 
     private function getChunk()
