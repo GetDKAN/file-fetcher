@@ -227,7 +227,11 @@ class FileFetcher extends Job
 
     public function jsonSerialize()
     {
-        return (object) ['timeLimit' => $this->getTimeLimit(), 'result' => $this->getResult(), 'temporaryDirectory' => $this->temporaryDirectory];
+        return (object) [
+          'timeLimit' => $this->getTimeLimit(),
+          'result' => $this->getResult(),
+          'temporaryDirectory' => $this->temporaryDirectory
+        ];
     }
 
     public static function hydrate($json)
