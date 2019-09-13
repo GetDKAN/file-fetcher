@@ -42,13 +42,12 @@ class FileFetcher extends Job
         $this->setState($state);
     }
 
-    public function setTimeLimit(int $seconds)
+    public function setTimeLimit(int $seconds): bool
     {
-        if ($this->compatibleServer) {
-            parent::setTimeLimit($seconds);
-        } else {
-            parent::setTimeLimit(PHP_INT_MAX);
+        if (!$this->compatibleServer) {
+            return false;
         }
+        return parent::setTimeLimit($seconds);
     }
 
     protected function runIt()
