@@ -1,0 +1,16 @@
+version: 2
+plugins:
+  phpcodesniffer:
+    enabled: true
+    config:
+      standard: "PSR1,PSR2"
+exclude_patterns:
+ - "**/*.yml"
+ - "**/*.json"
+ - "*.md"
+ - "**/*.md"
+ - "*.xml"
+ - "**/*.xml"
+ - ".circleci/"
+ - ".gitignore"
+  
