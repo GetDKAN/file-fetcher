@@ -18,7 +18,8 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         );
         $result = $fetcher->run();
         $data = json_decode($result->getData());
-        $this->assertEquals("/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv", $data->destination);
+        $filepath = "/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv";
+        $this->assertEquals($filepath, $data->destination);
         $this->assertTrue($data->temporary);
     }
 

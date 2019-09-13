@@ -30,9 +30,7 @@ class FileFetcher extends Job
         if (!$file->isFile() && $this->serverIsNotCompatible($filePath)) {
             $this->compatibleServer = false;
             $state['total_bytes'] = PHP_INT_MAX;
-            if (file_exists($state['destination'])) {
-                unlink($state['destination']);
-            }
+            $this->deleteFile($state['destination']);
         } else {
             $state['total_bytes'] = $file->isFile() ? $file->getSize() : $this->getRemoteFileSize($filePath);
         }
@@ -252,6 +250,13 @@ class FileFetcher extends Job
     private function setState($state)
     {
         $this->getResult()->setData(json_encode($state));
+    }
+
+    private function deleteFile($file)
+    {
+        if (file_exists($file)) {
+            unlink($file);
+        }
     }
 
     public function setStateProperty($property, $value)
