@@ -59,12 +59,14 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($fetcher2->getResult()->getStatus(), \Procrastinator\Result::DONE);
     }
 
-    public function testIncompatibleServer() {
-      $url = "https://data.medicare.gov/api/views/42wc-33ci/rows.csv?accessType=DOWNLOAD&sorting=true";
-      $fetcher = new FileFetcher($url);
-      $result = $fetcher->run();
-      $this->assertEquals(Result::DONE, $result->getStatus());
-      $this->assertEquals(2853, json_decode($result->getData())->total_bytes_copied);
+    public function testIncompatibleServer()
+    {
+        $url = "https://data.medicare.gov/api/views/42wc-33ci/rows.csv?accessType=DOWNLOAD&sorting=true";
+        $fetcher = new FileFetcher($url);
+        $fetcher->setTimeLimit(1);
+        $result = $fetcher->run();
+        $this->assertEquals(Result::DONE, $result->getStatus());
+        $this->assertEquals(2853, json_decode($result->getData())->total_bytes_copied);
     }
 
     public function tearDown(): void
