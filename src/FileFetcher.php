@@ -9,6 +9,7 @@ class FileFetcher extends Job
 {
     private $temporaryDirectory;
     private $chunkSizeInBytes = (1024 * 100);
+    private $compatibleServer = true;
 
     public function __construct($filePath, $temporaryDirectory = "/tmp")
     {
@@ -27,10 +28,14 @@ class FileFetcher extends Job
         $state['destination'] = $file->isFile() ? $filePath : $this->getTemporaryFilePath($filePath);
 
         if (!$file->isFile() && $this->serverIsNotCompatible($filePath)) {
-            throw new \Exception("The server hosting the file does not support ranged requests.");
+            $this->compatibleServer = false;
+            $state['total_bytes'] = PHP_INT_MAX;
+            if (file_exists($state['destination'])) {
+                unlink($state['destination']);
+            }
+        } else {
+            $state['total_bytes'] = $file->isFile() ? $file->getSize() : $this->getRemoteFileSize($filePath);
         }
-
-        $state['total_bytes'] = $file->isFile() ? $file->getSize() : $this->getRemoteFileSize($filePath);
 
         if (file_exists($state['destination'])) {
             $state['total_bytes_copied'] = filesize($state['destination']);
@@ -39,10 +44,23 @@ class FileFetcher extends Job
         $this->setState($state);
     }
 
+    public function setTimeLimit(int $seconds)
+    {
+        if ($this->compatibleServer) {
+            parent::setTimeLimit($seconds);
+        } else {
+            parent::setTimeLimit(PHP_INT_MAX);
+        }
+    }
+
     protected function runIt()
     {
         try {
-            $this->copy();
+            if ($this->compatibleServer) {
+                $this->copy();
+            } else {
+                $this->copyIncompatible();
+            }
             $result = $this->getResult();
             $result->setStatus(Result::DONE);
         } catch (FileCopyInterruptedException $e) {
@@ -149,6 +167,24 @@ class FileFetcher extends Job
         }
     }
 
+    private function copyIncompatible()
+    {
+        $from = $this->getStateProperty('source');
+        $to = $this->getStateProperty('destination');
+
+      # 1 meg at a time, you can adjust this.
+        $buffer_size = 1048576;
+        $ret = 0;
+        $fin = fopen($from, "rb");
+        $fout = fopen($to, "w");
+        while (!feof($fin)) {
+            $ret += fwrite($fout, fread($fin, $buffer_size));
+        }
+        fclose($fin);
+        fclose($fout);
+        $this->setStateProperty('total_bytes_copied', $ret);
+    }
+
     private function getChunk()
     {
         $url = $this->getStateProperty('source');
@@ -175,8 +211,8 @@ class FileFetcher extends Job
 
     private function getTemporaryFilePath($sourceFileUrl)
     {
-        $pieces = explode("/", $sourceFileUrl);
-        $file_name = end($pieces);
+        $info = parse_url($sourceFileUrl);
+        $file_name = str_replace(".", "_", $info["host"]) . str_replace("/", "_", $info['path']);
         return $this->getTemporaryFile($file_name);
     }
 

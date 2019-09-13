@@ -2,10 +2,13 @@
 
 namespace FileFetcherTest;
 
+use FileFetcher\FileFetcher;
+use Procrastinator\Result;
+
 class FileFetcherTest extends \PHPUnit\Framework\TestCase
 {
 
-    private $sampleCsvSize = 50;
+    private $sampleCsvSize = 2;
 
     public function testRemote()
     {
@@ -15,7 +18,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         );
         $result = $fetcher->run();
         $data = json_decode($result->getData());
-        $this->assertEquals("/tmp/sacramentorealestatetransactions.csv", $data->destination);
+        $this->assertEquals("/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv", $data->destination);
         $this->assertTrue($data->temporary);
     }
 
@@ -50,18 +53,27 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $fetcher2->run();
         $this->assertEquals($file_size, $fetcher2->getStateProperty('total_bytes_copied'));
         $this->assertEquals(
-            filesize("/tmp/{$this->sampleCsvSize}_mb_sample.csv"),
+            filesize("/tmp/dkan_default_content_files_s3_amazonaws_com_{$this->sampleCsvSize}_mb_sample.csv"),
             $fetcher2->getStateProperty('total_bytes_copied')
         );
         $this->assertEquals($fetcher2->getResult()->getStatus(), \Procrastinator\Result::DONE);
+    }
+
+    public function testIncompatibleServer() {
+      $url = "https://data.medicare.gov/api/views/42wc-33ci/rows.csv?accessType=DOWNLOAD&sorting=true";
+      $fetcher = new FileFetcher($url);
+      $result = $fetcher->run();
+      $this->assertEquals(Result::DONE, $result->getStatus());
+      $this->assertEquals(2853, json_decode($result->getData())->total_bytes_copied);
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
         $files = [
-        "/tmp/{$this->sampleCsvSize}_mb_sample.csv",
-        "/tmp/sacramentorealestatetransactions.csv"
+          "/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv",
+          "/tmp/dkan_default_content_files_s3_amazonaws_com_{$this->sampleCsvSize}_mb_sample.csv",
+          "/tmp/data_medicare_gov_api_views_42wc_33ci_rows.csv",
         ];
 
         foreach ($files as $file) {
