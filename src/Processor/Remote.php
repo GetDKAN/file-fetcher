@@ -142,8 +142,7 @@ class Remote implements ProcessorInterface
         if (count($parts) > 1) {
             $key = array_shift($parts);
             $value = trim(implode(":", $parts));
-        }
-        else {
+        } else {
             $value = trim($line);
         }
 
