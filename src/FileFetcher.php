@@ -22,7 +22,7 @@ class FileFetcher extends Job
             'source' => $filePath,
             'total_bytes' => 0,
             'total_bytes_copied' => 0,
-            'temporary' => FALSE,
+            'temporary' => false,
             'destination' => $filePath,
             'temporary_directory' => $temporaryDirectory,
         ];
@@ -53,7 +53,8 @@ class FileFetcher extends Job
         return $info['result'];
     }
 
-    private static function getProcessors() {
+    private static function getProcessors()
+    {
         $processors = [];
         $processors[Local::class] = new Local();
         $processors[Remote::class] = new Remote();

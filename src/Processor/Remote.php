@@ -54,9 +54,9 @@ class Remote implements ProcessorInterface
 
             if ($bytesWritten !== strlen($chunk)) {
                 throw new \RuntimeException(
-                  "Unable to fetch {$state['source']}. " .
-                  " Reason: Failed to write to destination " . $destination_file,
-                  0
+                    "Unable to fetch {$state['source']}. " .
+                    " Reason: Failed to write to destination " . $destination_file,
+                    0
                 );
             }
 
