@@ -129,7 +129,6 @@ class Remote implements ProcessorInterface
             $line = trim($line);
             $keyvalue = $this->getKeyValueFromLine($line);
             $headers[$keyvalue['key']] = $keyvalue['value'];
-
         }
         return $headers;
     }
