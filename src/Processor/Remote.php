@@ -70,7 +70,8 @@ class Remote implements ProcessorInterface
         return ['state' => $state, 'result' => $result];
     }
 
-    private function createOrAppend($filePath, $chunk) {
+    private function createOrAppend($filePath, $chunk)
+    {
         if (!file_exists($filePath)) {
             $bytesWritten = file_put_contents($filePath, $chunk);
         } else {
