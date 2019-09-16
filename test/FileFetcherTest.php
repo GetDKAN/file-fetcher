@@ -12,7 +12,6 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
 
     public function testRemote()
     {
-      // https://drive.google.com/uc?export=download&confirm=-NkI&id=1-9N00dZkOipIAkXMl2D0cdWaVlqfF0E5
         $fetcher = new \FileFetcher\FileFetcher(
             "http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv"
         );
