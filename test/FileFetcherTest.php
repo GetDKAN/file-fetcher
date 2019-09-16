@@ -7,7 +7,6 @@ use Procrastinator\Result;
 
 class FileFetcherTest extends \PHPUnit\Framework\TestCase
 {
-
     private $sampleCsvSize = 50;
 
     public function testRemote()
@@ -26,6 +25,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
     {
         $local_file = __DIR__ . "/files/tiny.csv";
         $fetcher = new \FileFetcher\FileFetcher($local_file);
+        $fetcher->setTimeLimit(1);
         $result = $fetcher->run();
         $data = json_decode($result->getData());
         $this->assertEquals($local_file, $data->destination);

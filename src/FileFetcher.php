@@ -72,13 +72,6 @@ class FileFetcher extends Job
         $this->getResult()->setData(json_encode($state));
     }
 
-    public function setStateProperty($property, $value)
-    {
-        $state = $this->getState();
-        $state[$property] = $value;
-        $this->setState($state);
-    }
-
     public function jsonSerialize()
     {
         $object = parent::jsonSerialize();
