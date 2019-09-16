@@ -1,8 +1,6 @@
 <?php
 
-
 namespace FileFetcher\Processor;
-
 
 use Procrastinator\Result;
 
