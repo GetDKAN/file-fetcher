@@ -127,18 +127,28 @@ class Remote implements ProcessorInterface
         $lines = explode(PHP_EOL, $string);
         foreach ($lines as $line) {
             $line = trim($line);
-            $parts = explode(":", $line);
-            if (count($parts) > 1) {
-                $key = array_shift($parts);
-                $value = trim(implode(":", $parts));
-                $headers[$key] = $value;
-            } else {
-                if (!empty($value)) {
-                    $headers[] = $value;
-                }
-            }
+            $keyvalue = $this->getKeyValueFromLine($line);
+            $headers[$keyvalue['key']] = $keyvalue['value'];
+
         }
         return $headers;
+    }
+
+    private function getKeyValueFromLine($line): array
+    {
+        $key = null;
+        $value = null;
+
+        $parts = explode(":", $line);
+        if (count($parts) > 1) {
+            $key = array_shift($parts);
+            $value = trim(implode(":", $parts));
+        }
+        else {
+            $value = trim($line);
+        }
+
+        return ['key' => $key, 'value' => $value];
     }
 
     private function getRemoteFileSize($url)
