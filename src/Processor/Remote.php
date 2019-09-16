@@ -40,22 +40,18 @@ class Remote implements ProcessorInterface
 
     public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
     {
-        $destination_file = $state['destination'];
+        $destinationFile = $state['destination'];
         $total = $state['total_bytes_copied'];
 
         $expiration = time() + $timeLimit;
 
         while ($chunk = $this->getChunk($state)) {
-            if (!file_exists($destination_file)) {
-                $bytesWritten = file_put_contents($destination_file, $chunk);
-            } else {
-                $bytesWritten = file_put_contents($destination_file, $chunk, FILE_APPEND);
-            }
+            $bytesWritten = $this->createOrAppend($destinationFile, $chunk);
 
             if ($bytesWritten !== strlen($chunk)) {
                 throw new \RuntimeException(
                     "Unable to fetch {$state['source']}. " .
-                    " Reason: Failed to write to destination " . $destination_file,
+                    " Reason: Failed to write to destination " . $destinationFile,
                     0
                 );
             }
@@ -72,6 +68,15 @@ class Remote implements ProcessorInterface
 
         $result->setStatus(Result::DONE);
         return ['state' => $state, 'result' => $result];
+    }
+
+    private function createOrAppend($filePath, $chunk) {
+        if (!file_exists($filePath)) {
+            $bytesWritten = file_put_contents($filePath, $chunk);
+        } else {
+            $bytesWritten = file_put_contents($filePath, $chunk, FILE_APPEND);
+        }
+        return $bytesWritten;
     }
 
     private function getChunk(array $state)
