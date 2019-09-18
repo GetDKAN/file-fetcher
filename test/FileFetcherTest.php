@@ -69,6 +69,16 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2853, json_decode($result->getData())->total_bytes_copied);
     }
 
+    public function testSodaServer()
+    {
+        $url = "https://data.medicare.gov/resource/rbry-mqwu.csv";
+        $fetcher = new FileFetcher($url);
+        $result = $fetcher->run();
+        $this->assertEquals(Result::DONE, $result->getStatus());
+        $lines = file(json_decode($result->getData())->destination);
+        $this->assertEquals(5335, count($lines));
+    }
+
     public function tearDown(): void
     {
         parent::tearDown();
@@ -76,6 +86,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
           "/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv",
           "/tmp/dkan_default_content_files_s3_amazonaws_com_{$this->sampleCsvSize}_mb_sample.csv",
           "/tmp/data_medicare_gov_api_views_42wc_33ci_rows.csv",
+          "/tmp/data_medicare_gov_resource_rbry_mqwu.csv"
         ];
 
         foreach ($files as $file) {

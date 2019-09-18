@@ -6,6 +6,7 @@ use FileFetcher\Processor\Local;
 use FileFetcher\Processor\ProcessorInterface;
 use FileFetcher\Processor\Remote;
 use FileFetcher\Processor\LastResort;
+use FileFetcher\Processor\Soda;
 use Procrastinator\Job\Job;
 use Procrastinator\Result;
 
@@ -58,6 +59,7 @@ class FileFetcher extends Job
         $processors = [];
         $processors[Local::class] = new Local();
         $processors[Remote::class] = new Remote();
+        $processors[Soda::class] = new Soda();
         $processors[LastResort::class] =  new LastResort();
         return $processors;
     }

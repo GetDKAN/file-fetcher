@@ -1,22 +1,30 @@
 <?php
 
+
 namespace FileFetcher\Processor;
+
 
 use FileFetcher\Headers;
 use FileFetcher\TemporaryFilePathFromUrl;
 use Procrastinator\Result;
 
-class Remote implements ProcessorInterface
+class Soda implements ProcessorInterface
 {
-    use TemporaryFilePathFromUrl;
     use Headers;
+    use TemporaryFilePathFromUrl;
 
     public function isServerCompatible(array $state): bool
     {
         $headers = $this->getHeaders($state['source']);
+        if (!isset($headers['X-Socrata-RequestId'])) {
+            return false;
+        }
 
-        if (isset($headers['Accept-Ranges']) && isset($headers['Content-Length'])) {
-            return true;
+        $headers = get_headers($state['source']);
+        foreach ($headers as $header) {
+            if (substr_count($header, "X-SODA2") > 0) {
+                return true;
+            }
         }
 
         return false;
@@ -26,22 +34,22 @@ class Remote implements ProcessorInterface
     {
         $state['destination'] = $this->getTemporaryFilePath($state);
         $state['temporary'] = true;
-        $state['total_bytes'] = $this->getRemoteFileSize($state['source']);
+        $state['total_bytes'] = null;
 
         if (file_exists($state['destination'])) {
-            $state['total_bytes_copied'] = filesize($state['destination']);
+            unlink($state['destination']);
         }
+
+        // Custom state.
+        $state['next_offset'] = 0;
 
         return $state;
     }
 
-    public function isTimeLimitIncompatible(): bool
-    {
-        return false;
-    }
-
     public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
     {
+        $numberOfRecordsPerRequest = 1000;
+
         $destinationFile = $state['destination'];
         $total = $state['total_bytes_copied'];
 
@@ -58,6 +66,7 @@ class Remote implements ProcessorInterface
                 );
             }
 
+            $state['next_offset'] += $numberOfRecordsPerRequest;
             $total += $bytesWritten;
             $state['total_bytes_copied'] = $total;
 
@@ -72,6 +81,23 @@ class Remote implements ProcessorInterface
         return ['state' => $state, 'result' => $result];
     }
 
+    public function isTimeLimitIncompatible(): bool
+    {
+        return false;
+    }
+
+    private function getChunk($state)
+    {
+        $url = $state['source'];
+        $offset = $state['next_offset'];
+
+        $content = file_get_contents($url . '?$offset=' . $offset);
+        if ($offset !== 0) {
+            $content = preg_replace('/^.+\n/', '', $content);
+        }
+        return $content;
+    }
+
     private function createOrAppend($filePath, $chunk)
     {
         if (!file_exists($filePath)) {
@@ -80,38 +106,5 @@ class Remote implements ProcessorInterface
             $bytesWritten = file_put_contents($filePath, $chunk, FILE_APPEND);
         }
         return $bytesWritten;
-    }
-
-    private function getChunk(array $state)
-    {
-        // 1 MB.
-        $bytesToRead = 1024 * 1000;
-
-        $url = $state['source'];
-        $start = $state['total_bytes_copied'];
-        $end = $start + $bytesToRead;
-
-        if ($end > $state['total_bytes']) {
-            $end = $state['total_bytes'];
-        }
-
-        if ($start == $end) {
-            return false;
-        }
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RANGE, "{$start}-{$end}");
-        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        return $result;
-    }
-
-    private function getRemoteFileSize($url)
-    {
-        $headers = $this->getHeaders($url);
-        return $headers['Content-Length'];
     }
 }
