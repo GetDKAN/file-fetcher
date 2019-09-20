@@ -1,0 +1,303 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<tagfile>
+  <compound kind="file">
+    <name>README.md</name>
+    <path>/home/fmizzell/Workspace/file-fetcher/</path>
+    <filename>README_8md</filename>
+  </compound>
+  <compound kind="file">
+    <name>FileCopyInterruptedException.php</name>
+    <path>/home/fmizzell/Workspace/file-fetcher/src/</path>
+    <filename>FileCopyInterruptedException_8php</filename>
+    <class kind="class">FileFetcher::FileCopyInterruptedException</class>
+    <namespace>FileFetcher</namespace>
+  </compound>
+  <compound kind="file">
+    <name>FileFetcher.php</name>
+    <path>/home/fmizzell/Workspace/file-fetcher/src/</path>
+    <filename>FileFetcher_8php</filename>
+    <class kind="class">FileFetcher::FileFetcher</class>
+    <namespace>FileFetcher</namespace>
+  </compound>
+  <compound kind="file">
+    <name>LastResort.php</name>
+    <path>/home/fmizzell/Workspace/file-fetcher/src/Processor/</path>
+    <filename>LastResort_8php</filename>
+    <class kind="class">FileFetcher::Processor::LastResort</class>
+    <namespace>FileFetcher::Processor</namespace>
+  </compound>
+  <compound kind="file">
+    <name>Local.php</name>
+    <path>/home/fmizzell/Workspace/file-fetcher/src/Processor/</path>
+    <filename>Local_8php</filename>
+    <class kind="class">FileFetcher::Processor::Local</class>
+    <namespace>FileFetcher::Processor</namespace>
+  </compound>
+  <compound kind="file">
+    <name>ProcessorInterface.php</name>
+    <path>/home/fmizzell/Workspace/file-fetcher/src/Processor/</path>
+    <filename>ProcessorInterface_8php</filename>
+    <class kind="interface">FileFetcher::Processor::ProcessorInterface</class>
+    <namespace>FileFetcher::Processor</namespace>
+  </compound>
+  <compound kind="file">
+    <name>Remote.php</name>
+    <path>/home/fmizzell/Workspace/file-fetcher/src/Processor/</path>
+    <filename>Remote_8php</filename>
+    <class kind="class">FileFetcher::Processor::Remote</class>
+    <namespace>FileFetcher::Processor</namespace>
+  </compound>
+  <compound kind="file">
+    <name>TemporaryFilePathFromUrl.php</name>
+    <path>/home/fmizzell/Workspace/file-fetcher/src/</path>
+    <filename>TemporaryFilePathFromUrl_8php</filename>
+    <namespace>FileFetcher</namespace>
+  </compound>
+  <compound kind="file">
+    <name>FileFetcherTest.php</name>
+    <path>/home/fmizzell/Workspace/file-fetcher/test/</path>
+    <filename>FileFetcherTest_8php</filename>
+    <class kind="class">FileFetcherTest::FileFetcherTest</class>
+    <namespace>FileFetcherTest</namespace>
+  </compound>
+  <compound kind="class">
+    <name>FileFetcher::FileCopyInterruptedException</name>
+    <filename>classFileFetcher_1_1FileCopyInterruptedException.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>FileFetcher::FileFetcher</name>
+    <filename>classFileFetcher_1_1FileFetcher.html</filename>
+    <base>Procrastinator::Job::Job</base>
+    <member kind="function">
+      <type></type>
+      <name>__construct</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>a2b862d9977f52ec9afe1ed70c0ad9567</anchor>
+      <arglist>($filePath, $temporaryDirectory=&quot;/tmp&quot;)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>setTimeLimit</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>a055989cc58890d0b14963fc8cce0382e</anchor>
+      <arglist>(int $seconds)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>jsonSerialize</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>aeedc616c657cd8401c0ca46a470f7e45</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static</type>
+      <name>hydrate</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>a544130772f7162e68c6f61bb26a8907d</anchor>
+      <arglist>($json)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type></type>
+      <name>runIt</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>a4babdf20c7219aa3d31859b8a28c79af</anchor>
+      <arglist>()</arglist>
+    </member>
+    <docanchor file="classFileFetcher_1_1FileFetcher" title="Basic Usage:">autotoc_md1</docanchor>
+  </compound>
+  <compound kind="class">
+    <name>FileFetcherTest::FileFetcherTest</name>
+    <filename>classFileFetcherTest_1_1FileFetcherTest.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>testRemote</name>
+      <anchorfile>classFileFetcherTest_1_1FileFetcherTest.html</anchorfile>
+      <anchor>a7312d6935af8522fd21a2d7abf4445a9</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>testLocal</name>
+      <anchorfile>classFileFetcherTest_1_1FileFetcherTest.html</anchorfile>
+      <anchor>add3b623be029b55161d221b62a347ee7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>testTimeOut</name>
+      <anchorfile>classFileFetcherTest_1_1FileFetcherTest.html</anchorfile>
+      <anchor>a1e5e7738ac4959ab037806cda917f3fe</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>testIncompatibleServer</name>
+      <anchorfile>classFileFetcherTest_1_1FileFetcherTest.html</anchorfile>
+      <anchor>a3f370cc3f8cf198261eb67fdcea784b8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>tearDown</name>
+      <anchorfile>classFileFetcherTest_1_1FileFetcherTest.html</anchorfile>
+      <anchor>a002ed439fdf35ba59c40a59ad6b8ff02</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>FileFetcher::Processor::LastResort</name>
+    <filename>classFileFetcher_1_1Processor_1_1LastResort.html</filename>
+    <base>FileFetcher::Processor::ProcessorInterface</base>
+    <member kind="function">
+      <type></type>
+      <name>isServerCompatible</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1LastResort.html</anchorfile>
+      <anchor>a2d5b3709f2820d2249a0abcb571cd2fd</anchor>
+      <arglist>(array $state)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>setupState</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1LastResort.html</anchorfile>
+      <anchor>a49311c38dd7bf48d135588f24fdeeb18</anchor>
+      <arglist>(array $state)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>isTimeLimitIncompatible</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1LastResort.html</anchorfile>
+      <anchor>a4796d7e77c91f50513a4a087f1362ccc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>copy</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1LastResort.html</anchorfile>
+      <anchor>a98122be32c083ec20ad57e07a12bfd2d</anchor>
+      <arglist>(array $state, Result $result, int $timeLimit=PHP_INT_MAX)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>FileFetcher::Processor::Local</name>
+    <filename>classFileFetcher_1_1Processor_1_1Local.html</filename>
+    <base>FileFetcher::Processor::ProcessorInterface</base>
+    <member kind="function">
+      <type></type>
+      <name>isServerCompatible</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1Local.html</anchorfile>
+      <anchor>ad700d9d6173bf9692ac6578689670ba1</anchor>
+      <arglist>(array $state)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>setupState</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1Local.html</anchorfile>
+      <anchor>a8a9101ace20d12f98f2f810be44076da</anchor>
+      <arglist>(array $state)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>isTimeLimitIncompatible</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1Local.html</anchorfile>
+      <anchor>a449cfc1365bb5d5daad4ddc57d12e0ce</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>copy</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1Local.html</anchorfile>
+      <anchor>afdad12994306ac1cae4e6666025bccf5</anchor>
+      <arglist>(array $state, Result $result, int $timeLimit=PHP_INT_MAX)</arglist>
+    </member>
+  </compound>
+  <compound kind="interface">
+    <name>FileFetcher::Processor::ProcessorInterface</name>
+    <filename>interfaceFileFetcher_1_1Processor_1_1ProcessorInterface.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>isServerCompatible</name>
+      <anchorfile>interfaceFileFetcher_1_1Processor_1_1ProcessorInterface.html</anchorfile>
+      <anchor>aa1174260f2093cc426ad9ebf27130cb7</anchor>
+      <arglist>(array $state)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>setupState</name>
+      <anchorfile>interfaceFileFetcher_1_1Processor_1_1ProcessorInterface.html</anchorfile>
+      <anchor>a4aeb4ed3b71452d94003386d508de32f</anchor>
+      <arglist>(array $state)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>copy</name>
+      <anchorfile>interfaceFileFetcher_1_1Processor_1_1ProcessorInterface.html</anchorfile>
+      <anchor>acea2aa34ad3ffc45cde79eaba7896d7b</anchor>
+      <arglist>(array $state, Result $result, int $timeLimit=PHP_INT_MAX)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>isTimeLimitIncompatible</name>
+      <anchorfile>interfaceFileFetcher_1_1Processor_1_1ProcessorInterface.html</anchorfile>
+      <anchor>a133a1e253986f9d1f6f1c7f4e1d9d360</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>FileFetcher::Processor::Remote</name>
+    <filename>classFileFetcher_1_1Processor_1_1Remote.html</filename>
+    <base>FileFetcher::Processor::ProcessorInterface</base>
+    <member kind="function">
+      <type></type>
+      <name>isServerCompatible</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1Remote.html</anchorfile>
+      <anchor>a21c98a0b3aa3b66310551871c584512a</anchor>
+      <arglist>(array $state)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>setupState</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1Remote.html</anchorfile>
+      <anchor>a76b0fec2742a58fd83ca0a3f4c98f2ba</anchor>
+      <arglist>(array $state)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>isTimeLimitIncompatible</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1Remote.html</anchorfile>
+      <anchor>a39342c4fcc5e1b11073ec13ce31e335d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>copy</name>
+      <anchorfile>classFileFetcher_1_1Processor_1_1Remote.html</anchorfile>
+      <anchor>a55dbe11413337604c72b50fd0622bcdd</anchor>
+      <arglist>(array $state, Result $result, int $timeLimit=PHP_INT_MAX)</arglist>
+    </member>
+  </compound>
+  <compound kind="namespace">
+    <name>FileFetcher</name>
+    <filename>namespaceFileFetcher.html</filename>
+    <namespace>FileFetcher::Processor</namespace>
+    <class kind="class">FileFetcher::FileCopyInterruptedException</class>
+    <class kind="class">FileFetcher::FileFetcher</class>
+  </compound>
+  <compound kind="namespace">
+    <name>FileFetcher::Processor</name>
+    <filename>namespaceFileFetcher_1_1Processor.html</filename>
+    <class kind="class">FileFetcher::Processor::LastResort</class>
+    <class kind="class">FileFetcher::Processor::Local</class>
+    <class kind="interface">FileFetcher::Processor::ProcessorInterface</class>
+    <class kind="class">FileFetcher::Processor::Remote</class>
+  </compound>
+  <compound kind="namespace">
+    <name>FileFetcherTest</name>
+    <filename>namespaceFileFetcherTest.html</filename>
+    <class kind="class">FileFetcherTest::FileFetcherTest</class>
+  </compound>
+  <compound kind="page">
+    <name>index</name>
+    <title>file-fetcher</title>
+    <filename>index</filename>
+  </compound>
+</tagfile>

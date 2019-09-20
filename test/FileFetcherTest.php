@@ -7,16 +7,19 @@ use Procrastinator\Result;
 
 class FileFetcherTest extends \PHPUnit\Framework\TestCase
 {
-
     private $sampleCsvSize = 50;
 
     public function testRemote()
     {
-      // https://drive.google.com/uc?export=download&confirm=-NkI&id=1-9N00dZkOipIAkXMl2D0cdWaVlqfF0E5
+        // [Basic Usage]
+
         $fetcher = new \FileFetcher\FileFetcher(
             "http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv"
         );
         $result = $fetcher->run();
+
+        // [Basic Usage]
+
         $data = json_decode($result->getData());
         $filepath = "/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv";
         $this->assertEquals($filepath, $data->destination);
@@ -27,6 +30,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
     {
         $local_file = __DIR__ . "/files/tiny.csv";
         $fetcher = new \FileFetcher\FileFetcher($local_file);
+        $fetcher->setTimeLimit(1);
         $result = $fetcher->run();
         $data = json_decode($result->getData());
         $this->assertEquals($local_file, $data->destination);
