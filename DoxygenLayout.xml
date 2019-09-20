@@ -38,10 +38,10 @@
 
   <!-- Layout definition for a class page -->
   <class>
-    <detaileddescription title=""/>
     <includes visible="$SHOW_INCLUDE_FILES"/>
     <inheritancegraph visible="$CLASS_GRAPH"/>
     <collaborationgraph visible="$COLLABORATION_GRAPH"/>
+    <detaileddescription title=""/>
     <memberdecl>
       <nestedclasses visible="yes" title=""/>
       <publictypes title=""/>

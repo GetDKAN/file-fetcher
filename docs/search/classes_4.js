@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['twostage_60',['TwoStage',['https://getdkan.github.io/procrastinator/classProcrastinatorTest_1_1Job_1_1TwoStage.html',1,'ProcrastinatorTest::Job']]]
+  ['processorinterface_74',['ProcessorInterface',['../interfaceFileFetcher_1_1Processor_1_1ProcessorInterface.html',1,'FileFetcher::Processor']]]
 ];

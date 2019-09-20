@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['method_56',['Method',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Job_1_1Method.html',1,'Procrastinator::Job']]]
+  ['lastresort_71',['LastResort',['../classFileFetcher_1_1Processor_1_1LastResort.html',1,'FileFetcher::Processor']]],
+  ['local_72',['Local',['../classFileFetcher_1_1Processor_1_1Local.html',1,'FileFetcher::Processor']]]
 ];

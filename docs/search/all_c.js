@@ -1,9 +1,11 @@
 var searchData=
 [
-  ['setdata_34',['setData',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Result.html#ad3ecb5511f14644552e8ebda928c7141',1,'Procrastinator::Result']]],
-  ['seterror_35',['setError',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Result.html#acd24d5b825f1e30e272fe255164bc720',1,'Procrastinator::Result']]],
-  ['setstateproperty_36',['setStateProperty',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Job_1_1Job.html#ac5289afb4339098c82d21dcbea05c985',1,'Procrastinator::Job::Job::setStateProperty()'],['../classFileFetcher_1_1FileFetcher.html#a5de8079de72cdd755efe13f82d65b5b8',1,'FileFetcher\FileFetcher\setStateProperty()']]],
-  ['setstatus_37',['setStatus',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Result.html#a99279d931024f341c8fc94d5fef87deb',1,'Procrastinator::Result']]],
-  ['settimelimit_38',['setTimeLimit',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Job_1_1Job.html#ab368a6153563f1cd3d60d55914072c8a',1,'Procrastinator::Job::Job']]],
-  ['stopped_39',['STOPPED',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Result.html#aabe4d705c2d5bd52d1818ed6c23800bd',1,'Procrastinator::Result']]]
+  ['readme_2emd_38',['README.md',['../README_8md.html',1,'']]],
+  ['remote_39',['Remote',['../classFileFetcher_1_1Processor_1_1Remote.html',1,'FileFetcher::Processor']]],
+  ['remote_2ephp_40',['Remote.php',['../Remote_8php.html',1,'']]],
+  ['result_41',['Result',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Result.html',1,'Procrastinator']]],
+  ['resulttest_42',['ResultTest',['https://getdkan.github.io/procrastinator/classProcrastinatorTest_1_1ResultTest.html',1,'ProcrastinatorTest']]],
+  ['run_43',['run',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Job_1_1Job.html#a52f841eee11a828a7ed72f44dacbe59e',1,'Procrastinator::Job::Job']]],
+  ['runit_44',['runIt',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Job_1_1Job.html#a9fb716b2c6bcb93a749e426cf9feccbd',1,'Procrastinator::Job::Job::runIt()'],['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Job_1_1Method.html#af584754e00f6f23dce6279800b2432cb',1,'Procrastinator::Job::Method::runIt()'],['https://getdkan.github.io/procrastinator/classProcrastinatorTest_1_1Job_1_1TwoStage.html#ae41002f621774f72c98d3896ec95d201',1,'ProcrastinatorTest::Job::TwoStage::runIt()'],['../classFileFetcher_1_1FileFetcher.html#a4babdf20c7219aa3d31859b8a28c79af',1,'FileFetcher\FileFetcher\runIt()']]],
+  ['runnertest_45',['RunnerTest',['https://getdkan.github.io/procrastinator/classProcrastinatorTest_1_1Job_1_1RunnerTest.html',1,'ProcrastinatorTest::Job']]]
 ];

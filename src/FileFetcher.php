@@ -25,6 +25,8 @@ class FileFetcher extends Job
         parent::__construct();
         $this->processors = self::getProcessors();
 
+        // [State]
+
         $state = [
             'source' => $filePath,
             'total_bytes' => 0,
@@ -33,6 +35,8 @@ class FileFetcher extends Job
             'destination' => $filePath,
             'temporary_directory' => $temporaryDirectory,
         ];
+
+        // [State]
 
         foreach ($this->processors as $processor) {
             if ($processor->isServerCompatible($state)) {
