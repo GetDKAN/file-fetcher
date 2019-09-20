@@ -9,6 +9,13 @@ use FileFetcher\Processor\LastResort;
 use Procrastinator\Job\Job;
 use Procrastinator\Result;
 
+/**
+ * @details
+ * These can be utilized to make a local copy of a remote file aka fetch a file.
+ *
+ * ### Basic Usage:
+ * @snippet test/FileFetcherTest.php Basic Usage
+ */
 class FileFetcher extends Job
 {
     private $processors = [];

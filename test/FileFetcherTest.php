@@ -11,10 +11,15 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
 
     public function testRemote()
     {
+        // [Basic Usage]
+
         $fetcher = new \FileFetcher\FileFetcher(
             "http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv"
         );
         $result = $fetcher->run();
+
+        // [Basic Usage]
+
         $data = json_decode($result->getData());
         $filepath = "/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv";
         $this->assertEquals($filepath, $data->destination);

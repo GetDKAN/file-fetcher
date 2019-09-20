@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<tagfile>
+  <compound kind="class">
+    <name>FileFetcher::FileCopyInterruptedException</name>
+    <filename>classFileFetcher_1_1FileCopyInterruptedException.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>FileFetcher::FileFetcher</name>
+    <filename>classFileFetcher_1_1FileFetcher.html</filename>
+    <base>Procrastinator::Job::Job</base>
+    <member kind="function">
+      <type></type>
+      <name>__construct</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>a2b862d9977f52ec9afe1ed70c0ad9567</anchor>
+      <arglist>($filePath, $temporaryDirectory=&quot;/tmp&quot;)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>setStateProperty</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>a5de8079de72cdd755efe13f82d65b5b8</anchor>
+      <arglist>($property, $value)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>jsonSerialize</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>aeedc616c657cd8401c0ca46a470f7e45</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static</type>
+      <name>hydrate</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>a544130772f7162e68c6f61bb26a8907d</anchor>
+      <arglist>($json)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type></type>
+      <name>runIt</name>
+      <anchorfile>classFileFetcher_1_1FileFetcher.html</anchorfile>
+      <anchor>a4babdf20c7219aa3d31859b8a28c79af</anchor>
+      <arglist>()</arglist>
+    </member>
+    <docanchor file="classFileFetcher_1_1FileFetcher" title="Basic Usage:">autotoc_md1</docanchor>
+  </compound>
+  <compound kind="class">
+    <name>FileFetcherTest::FileFetcherTest</name>
+    <filename>classFileFetcherTest_1_1FileFetcherTest.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>testRemote</name>
+      <anchorfile>classFileFetcherTest_1_1FileFetcherTest.html</anchorfile>
+      <anchor>a7312d6935af8522fd21a2d7abf4445a9</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>testLocal</name>
+      <anchorfile>classFileFetcherTest_1_1FileFetcherTest.html</anchorfile>
+      <anchor>add3b623be029b55161d221b62a347ee7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>testTimeOut</name>
+      <anchorfile>classFileFetcherTest_1_1FileFetcherTest.html</anchorfile>
+      <anchor>a1e5e7738ac4959ab037806cda917f3fe</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>tearDown</name>
+      <anchorfile>classFileFetcherTest_1_1FileFetcherTest.html</anchorfile>
+      <anchor>a002ed439fdf35ba59c40a59ad6b8ff02</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="namespace">
+    <name>FileFetcher</name>
+    <filename>namespaceFileFetcher.html</filename>
+    <class kind="class">FileFetcher::FileCopyInterruptedException</class>
+    <class kind="class">FileFetcher::FileFetcher</class>
+  </compound>
+  <compound kind="namespace">
+    <name>FileFetcherTest</name>
+    <filename>namespaceFileFetcherTest.html</filename>
+    <class kind="class">FileFetcherTest::FileFetcherTest</class>
+  </compound>
+  <compound kind="page">
+    <name>index</name>
+    <title>file-fetcher</title>
+    <filename>index</filename>
+  </compound>
+</tagfile>

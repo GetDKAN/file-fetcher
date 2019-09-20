@@ -1,0 +1,324 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<tagfile>
+    <compound kind="class">
+        <name>Procrastinator::Job::Job</name>
+        <filename>classProcrastinator_1_1Job_1_1Job.html</filename>
+        <member kind="function">
+            <type></type>
+            <name>__construct</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>a717cd5418609b07cba15c7c0324fc767</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>run</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>a52f841eee11a828a7ed72f44dacbe59e</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>setTimeLimit</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>ab368a6153563f1cd3d60d55914072c8a</anchor>
+            <arglist>(int $seconds)</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>getTimeLimit</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>a7d898163f521754057a680d7f742341f</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>getState</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>aa0430584f09937a9f9d309c594e6ea7b</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>getStateProperty</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>a5c0df7a3e73b1d424d960b4e8bf70025</anchor>
+            <arglist>(string $property, $default=null)</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>getResult</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>a381d7a6be6982cc5ded55d3ec46751c9</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>setStateProperty</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>ac5289afb4339098c82d21dcbea05c985</anchor>
+            <arglist>($property, $value)</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>jsonSerialize</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>a2f50540b6cd43a5ac5cfc0529208c505</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" static="yes">
+            <type>static</type>
+            <name>hydrate</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>a5ab7e8689ef2ab227e6cabfa655a1998</anchor>
+            <arglist>($json)</arglist>
+        </member>
+        <member kind="function" protection="protected">
+            <type></type>
+            <name>runIt</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Job.html</anchorfile>
+            <anchor>a9fb716b2c6bcb93a749e426cf9feccbd</anchor>
+            <arglist>()</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>Procrastinator::Job::Method</name>
+        <filename>classProcrastinator_1_1Job_1_1Method.html</filename>
+        <base>Procrastinator::Job::Job</base>
+        <member kind="function">
+            <type></type>
+            <name>__construct</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Method.html</anchorfile>
+            <anchor>a4a24cde6c710127314087a95b061e40c</anchor>
+            <arglist>($object, $methodName)</arglist>
+        </member>
+        <member kind="function" static="yes">
+            <type>static</type>
+            <name>hydrate</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Method.html</anchorfile>
+            <anchor>a5d8d684811f5511031023ddc23e3f80a</anchor>
+            <arglist>($json)</arglist>
+        </member>
+        <member kind="function" protection="protected">
+            <type></type>
+            <name>runIt</name>
+            <anchorfile>classProcrastinator_1_1Job_1_1Method.html</anchorfile>
+            <anchor>af584754e00f6f23dce6279800b2432cb</anchor>
+            <arglist>()</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>Procrastinator::Result</name>
+        <filename>classProcrastinator_1_1Result.html</filename>
+        <member kind="function">
+            <type></type>
+            <name>setStatus</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>a99279d931024f341c8fc94d5fef87deb</anchor>
+            <arglist>($status)</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>setData</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>ad3ecb5511f14644552e8ebda928c7141</anchor>
+            <arglist>(string $data)</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>setError</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>acd24d5b825f1e30e272fe255164bc720</anchor>
+            <arglist>(string $error)</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>getStatus</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>a82ee5de9151a925129f3c4a083adc0f2</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>getData</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>a6edb9bc10fd852c85c4dcc1a87da4190</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>getError</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>aedbad2749910a5a31a8a60293568208b</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>jsonSerialize</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>a53184752513e4e339f60477a2cdfb104</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="variable">
+            <type>const</type>
+            <name>STOPPED</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>aabe4d705c2d5bd52d1818ed6c23800bd</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="variable">
+            <type>const</type>
+            <name>IN_PROGRESS</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>ad0fa5204de1cecafe9b27b97dd48a526</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="variable">
+            <type>const</type>
+            <name>ERROR</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>ad93ea82ca269da5dae0cf66d0f84118b</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="variable">
+            <type>const</type>
+            <name>DONE</name>
+            <anchorfile>classProcrastinator_1_1Result.html</anchorfile>
+            <anchor>a3b3b1e27aa4995d87c707f826aa3cefc</anchor>
+            <arglist></arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>ProcrastinatorTest::ResultTest</name>
+        <filename>classProcrastinatorTest_1_1ResultTest.html</filename>
+        <member kind="function">
+            <type></type>
+            <name>test</name>
+            <anchorfile>classProcrastinatorTest_1_1ResultTest.html</anchorfile>
+            <anchor>a03b712c09215d08e616ffca12eccb432</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>testSerialization</name>
+            <anchorfile>classProcrastinatorTest_1_1ResultTest.html</anchorfile>
+            <anchor>ab0444118c9a7b78258ac1340a6084d3e</anchor>
+            <arglist>()</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>ProcrastinatorTest::Job::RunnerTest</name>
+        <filename>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</filename>
+        <member kind="function">
+            <type></type>
+            <name>test</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>a74ae8101ace2c1eac414a25550909466</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>testStateProperties</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>a647871efc92acf4db8805a4e2c9888ac</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>testError</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>a9c91d24de30bb30a173ee983d48dae87</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>testTimeLimit</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>a7ce09b39533bb060e9370657e0dd7187</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>testReturn</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>ad2b2108577da84eda9a894cb1af821b8</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>testTwoStage</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>ab86a779bd28b9733437fd87e53a7c416</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>testSerialization</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>a080644b71017a28aedc7cbf8b1bcc09e</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>callMe</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>ab464cc972260a43329ff3d4845cf2b09</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>callError</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>a0b5eab79ce70dd419e5c0fa199ec6877</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type></type>
+            <name>callReturn</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1RunnerTest.html</anchorfile>
+            <anchor>aec2f4c7ffafafaf48afe354beb86b0b0</anchor>
+            <arglist>()</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>ProcrastinatorTest::Job::TwoStage</name>
+        <filename>classProcrastinatorTest_1_1Job_1_1TwoStage.html</filename>
+        <base>Procrastinator::Job::Job</base>
+        <member kind="function" protection="protected">
+            <type></type>
+            <name>runIt</name>
+            <anchorfile>classProcrastinatorTest_1_1Job_1_1TwoStage.html</anchorfile>
+            <anchor>ae41002f621774f72c98d3896ec95d201</anchor>
+            <arglist>()</arglist>
+        </member>
+    </compound>
+    <compound kind="namespace">
+        <name>Procrastinator</name>
+        <filename>namespaceProcrastinator.html</filename>
+        <namespace>Procrastinator::Job</namespace>
+        <class kind="class">Procrastinator::Result</class>
+    </compound>
+    <compound kind="namespace">
+        <name>Procrastinator::Job</name>
+        <filename>namespaceProcrastinator_1_1Job.html</filename>
+        <class kind="class">Procrastinator::Job::Job</class>
+        <class kind="class">Procrastinator::Job::Method</class>
+    </compound>
+    <compound kind="namespace">
+        <name>ProcrastinatorTest</name>
+        <filename>namespaceProcrastinatorTest.html</filename>
+        <namespace>ProcrastinatorTest::Job</namespace>
+        <class kind="class">ProcrastinatorTest::ResultTest</class>
+    </compound>
+    <compound kind="namespace">
+        <name>ProcrastinatorTest::Job</name>
+        <filename>namespaceProcrastinatorTest_1_1Job.html</filename>
+        <class kind="class">ProcrastinatorTest::Job::RunnerTest</class>
+        <class kind="class">ProcrastinatorTest::Job::TwoStage</class>
+    </compound>
+    <compound kind="page">
+        <name>index</name>
+        <title>Procrastinator</title>
+        <filename>index</filename>
+    </compound>
+</tagfile>
