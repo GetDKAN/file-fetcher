@@ -13,4 +13,5 @@ exclude_patterns:
  - "**/*.xml"
  - ".circleci/"
  - ".gitignore"
+ - "docs/"
   
