@@ -8,7 +8,7 @@ use Procrastinator\Result;
 
 class FileFetcherTest extends \PHPUnit\Framework\TestCase
 {
-    private $sampleCsvSize = 5;
+    private $sampleCsvSize = 50;
 
     public function testRemote()
     {
@@ -77,7 +77,9 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($file_size, $fetcher2->getStateProperty('total_bytes_copied'));
 
         clearstatcache();
-        $actualFileSize = filesize("/tmp/dkan_default_content_files_s3_amazonaws_com_{$this->sampleCsvSize}_mb_sample.csv");
+        $actualFileSize = filesize(
+          "/tmp/dkan_default_content_files_s3_amazonaws_com_{$this->sampleCsvSize}_mb_sample.csv"
+        );
 
         $this->assertEquals($actualFileSize, $fetcher2->getStateProperty('total_bytes_copied'));
 
