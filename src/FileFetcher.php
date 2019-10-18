@@ -22,7 +22,6 @@ class FileFetcher extends Job
 
     public function __construct($filePath, $temporaryDirectory = "/tmp")
     {
-        parent::__construct();
         $this->processors = self::getProcessors();
 
         // [State]
@@ -78,7 +77,7 @@ class FileFetcher extends Job
         return $this->processors[$this->getStateProperty('processor')];
     }
 
-    private function setState($state)
+    protected function setState($state)
     {
         $this->getResult()->setData(json_encode($state));
     }
