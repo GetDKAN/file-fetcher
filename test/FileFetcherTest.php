@@ -78,7 +78,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
 
         clearstatcache();
         $actualFileSize = filesize(
-          "/tmp/dkan_default_content_files_s3_amazonaws_com_{$this->sampleCsvSize}_mb_sample.csv"
+            "/tmp/dkan_default_content_files_s3_amazonaws_com_{$this->sampleCsvSize}_mb_sample.csv"
         );
 
         $this->assertEquals($actualFileSize, $fetcher2->getStateProperty('total_bytes_copied'));
