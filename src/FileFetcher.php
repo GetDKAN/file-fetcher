@@ -54,7 +54,7 @@ class FileFetcher extends AbstractPersistentJob
             }
         }
 
-        $this->setState($state);
+        $this->getResult()->setData(json_encode($state));
     }
 
     public function setTimeLimit(int $seconds): bool
