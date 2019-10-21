@@ -1,6 +1,8 @@
 {
     "name": "getdkan/file-fetcher",
     "type": "library",
+    "license": "GPL-3.0-only",
+    "minimum-stability": "dev",
     "require-dev": {
         "phpunit/phpunit": "^8.2"
     },
@@ -17,7 +19,7 @@
         }
     },
     "require": {
-        "getdkan/procrastinator": "~2.0.0",
+        "getdkan/procrastinator": "^3.0.0",
         "ext-curl": "*"
     }
 }

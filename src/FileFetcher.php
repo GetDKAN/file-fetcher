@@ -6,7 +6,7 @@ use FileFetcher\Processor\Local;
 use FileFetcher\Processor\ProcessorInterface;
 use FileFetcher\Processor\Remote;
 use FileFetcher\Processor\LastResort;
-use Procrastinator\Job\Job;
+use Procrastinator\Job\AbstractPersistentJob;
 use Procrastinator\Result;
 
 /**
@@ -16,24 +16,30 @@ use Procrastinator\Result;
  * ### Basic Usage:
  * @snippet test/FileFetcherTest.php Basic Usage
  */
-class FileFetcher extends Job
+class FileFetcher extends AbstractPersistentJob
 {
     private $processors = [];
 
-    public function __construct($filePath, $temporaryDirectory = "/tmp")
+    /**
+     * Constructor.
+     */
+    protected function __construct(string $identifier, $storage, array $config = null)
     {
-        parent::__construct();
+        parent::__construct($identifier, $storage, $config);
+
+        $config = $this->validateConfig($config);
+
         $this->processors = self::getProcessors();
 
         // [State]
 
         $state = [
-            'source' => $filePath,
+            'source' => $config['filePath'],
             'total_bytes' => 0,
             'total_bytes_copied' => 0,
             'temporary' => false,
-            'destination' => $filePath,
-            'temporary_directory' => $temporaryDirectory,
+            'destination' => $config['filePath'],
+            'temporary_directory' => $config['temporaryDirectory'],
         ];
 
         // [State]
@@ -46,7 +52,7 @@ class FileFetcher extends Job
             }
         }
 
-        $this->setState($state);
+        $this->getResult()->setData(json_encode($state));
     }
 
     public function setTimeLimit(int $seconds): bool
@@ -55,6 +61,43 @@ class FileFetcher extends Job
             return false;
         }
         return parent::setTimeLimit($seconds);
+    }
+
+    public function jsonSerialize()
+    {
+        $object = parent::jsonSerialize();
+
+        $object->processor = get_class($this->getProcessor());
+
+        return $object;
+    }
+
+    public static function hydrate(string $json, $instance = null)
+    {
+        $data = json_decode($json);
+        $object = $instance;
+
+        $reflector = new \ReflectionClass(self::class);
+
+        if (!$instance) {
+            $object = $reflector->newInstanceWithoutConstructor();
+        }
+
+        $reflector = new \ReflectionClass($object);
+
+        $p = $reflector->getParentClass()->getParentClass()->getProperty('timeLimit');
+        $p->setAccessible(true);
+        $p->setValue($object, $data->timeLimit);
+
+        $p = $reflector->getParentClass()->getParentClass()->getProperty('result');
+        $p->setAccessible(true);
+        $p->setValue($object, Result::hydrate(json_encode($data->result)));
+
+        $p = $reflector->getProperty("processors");
+        $p->setAccessible(true);
+        $p->setValue($object, self::getProcessors());
+
+        return $object;
     }
 
     protected function runIt()
@@ -78,41 +121,17 @@ class FileFetcher extends Job
         return $this->processors[$this->getStateProperty('processor')];
     }
 
-    private function setState($state)
+    private function validateConfig($config): array
     {
-        $this->getResult()->setData(json_encode($state));
-    }
-
-    public function jsonSerialize()
-    {
-        $object = parent::jsonSerialize();
-
-        $object->processor = get_class($this->getProcessor());
-
-        return $object;
-    }
-
-    public static function hydrate($json)
-    {
-        $data = json_decode($json);
-
-        $reflector = new \ReflectionClass(self::class);
-        $object = $reflector->newInstanceWithoutConstructor();
-
-        $reflector = new \ReflectionClass($object);
-
-        $p = $reflector->getParentClass()->getProperty('timeLimit');
-        $p->setAccessible(true);
-        $p->setValue($object, $data->timeLimit);
-
-        $p = $reflector->getParentClass()->getProperty('result');
-        $p->setAccessible(true);
-        $p->setValue($object, Result::hydrate(json_encode($data->result)));
-
-        $p = $reflector->getProperty("processors");
-        $p->setAccessible(true);
-        $p->setValue($object, self::getProcessors());
-
-        return $object;
+        if (!is_array($config)) {
+            throw new \Exception("Constructor missing expected config filePath.");
+        }
+        if (!isset($config['temporaryDirectory'])) {
+            $config['temporaryDirectory'] = "/tmp";
+        }
+        if (!isset($config['filePath'])) {
+            throw new \Exception("Constructor missing expected config filePath.");
+        }
+        return $config;
     }
 }
