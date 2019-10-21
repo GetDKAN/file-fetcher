@@ -27,12 +27,7 @@ class FileFetcher extends AbstractPersistentJob
     {
         parent::__construct($identifier, $storage, $config);
 
-        if (!isset($config['temporaryDirectory'])) {
-            $config['temporaryDirectory'] = "/tmp";
-        }
-        if (!isset($config['filePath'])) {
-            throw new \Exception("Constructor missing expected config filePath.");
-        }
+        $config = $this->validateConfig($config);
 
         $this->processors = self::getProcessors();
 
@@ -66,27 +61,6 @@ class FileFetcher extends AbstractPersistentJob
             return false;
         }
         return parent::setTimeLimit($seconds);
-    }
-
-    protected function runIt()
-    {
-        $info = $this->getProcessor()->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
-        $this->setState($info['state']);
-        return $info['result'];
-    }
-
-    private static function getProcessors()
-    {
-        $processors = [];
-        $processors[Local::class] = new Local();
-        $processors[Remote::class] = new Remote();
-        $processors[LastResort::class] =  new LastResort();
-        return $processors;
-    }
-
-    private function getProcessor(): ProcessorInterface
-    {
-        return $this->processors[$this->getStateProperty('processor')];
     }
 
     public function jsonSerialize()
@@ -124,5 +98,40 @@ class FileFetcher extends AbstractPersistentJob
         $p->setValue($object, self::getProcessors());
 
         return $object;
+    }
+
+    protected function runIt()
+    {
+        $info = $this->getProcessor()->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
+        $this->setState($info['state']);
+        return $info['result'];
+    }
+
+    private static function getProcessors()
+    {
+        $processors = [];
+        $processors[Local::class] = new Local();
+        $processors[Remote::class] = new Remote();
+        $processors[LastResort::class] =  new LastResort();
+        return $processors;
+    }
+
+    private function getProcessor(): ProcessorInterface
+    {
+        return $this->processors[$this->getStateProperty('processor')];
+    }
+
+    private function validateConfig($config): array
+    {
+        if (!is_array($config)) {
+            throw new \Exception("Constructor missing expected config filePath.");
+        }
+        if (!isset($config['temporaryDirectory'])) {
+            $config['temporaryDirectory'] = "/tmp";
+        }
+        if (!isset($config['filePath'])) {
+            throw new \Exception("Constructor missing expected config filePath.");
+        }
+        return $config;
     }
 }
