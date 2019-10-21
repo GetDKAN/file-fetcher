@@ -19,7 +19,7 @@
         }
     },
     "require": {
-        "getdkan/procrastinator": "dev-store-state",
+        "getdkan/procrastinator": "^3.0.0",
         "ext-curl": "*"
     }
 }
