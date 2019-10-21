@@ -51,6 +51,15 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($data->temporary);
     }
 
+    public function testMissingConfigFilePath()
+    {
+        $this->expectExceptionMessage("Constructor missing expected config filePath.");
+        $fetcher = FileFetcher::get(
+            "1",
+            new Memory()
+        );
+    }
+
     public function testTimeOut()
     {
         $store = new Memory();

@@ -30,6 +30,9 @@ class FileFetcher extends AbstractPersistentJob
         if (!isset($config['temporaryDirectory'])) {
             $config['temporaryDirectory'] = "/tmp";
         }
+        if (!isset($config['filePath'])) {
+            throw new \Exception("Constructor missing expected config filePath.");
+        }
 
         $this->processors = self::getProcessors();
 
