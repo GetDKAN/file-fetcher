@@ -29,7 +29,23 @@ class FileFetcher extends AbstractPersistentJob
 
         $config = $this->validateConfig($config);
 
-        $this->processors = self::getProcessors();
+        if (isset($config['processors']) && is_array($config['processors'])) {
+            foreach ($config['processors'] as $processorClass) {
+                $classExists = class_exists($processorClass);
+                if ($classExists) {
+                    $instance = new $processorClass();
+                    if ($instance instanceof ProcessorInterface) {
+                        $this->processors[$processorClass] = $instance;
+                    } else {
+                        $interface = ProcessorInterface::class;
+                        throw new \Exception("The processor {$processorClass} does not implement {$interface}");
+                    }
+                } else {
+                    throw new \Exception("The processor {$processorClass} does not exist.");
+                }
+            }
+        }
+        $this->processors = array_merge($this->processors, self::getProcessors());
 
         // [State]
 
