@@ -135,7 +135,8 @@ class FileFetcher extends AbstractPersistentJob
         return $config;
     }
 
-    private function setProcessors($config) {
+    private function setProcessors($config)
+    {
         $this->processors = self::getProcessors();
 
         if (!isset($config['processors'])) {
@@ -153,7 +154,8 @@ class FileFetcher extends AbstractPersistentJob
         $this->processors = array_merge($this->processors, self::getProcessors());
     }
 
-    private function setProcessor($processorClass) {
+    private function setProcessor($processorClass)
+    {
         if (!class_exists($processorClass)) {
             return;
         }
