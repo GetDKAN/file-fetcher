@@ -29,23 +29,7 @@ class FileFetcher extends AbstractPersistentJob
 
         $config = $this->validateConfig($config);
 
-        if (isset($config['processors']) && is_array($config['processors'])) {
-            foreach ($config['processors'] as $processorClass) {
-                $classExists = class_exists($processorClass);
-                if ($classExists) {
-                    $instance = new $processorClass();
-                    if ($instance instanceof ProcessorInterface) {
-                        $this->processors[$processorClass] = $instance;
-                    } else {
-                        $interface = ProcessorInterface::class;
-                        throw new \Exception("The processor {$processorClass} does not implement {$interface}");
-                    }
-                } else {
-                    throw new \Exception("The processor {$processorClass} does not exist.");
-                }
-            }
-        }
-        $this->processors = array_merge($this->processors, self::getProcessors());
+        $this->setProcessors($config);
 
         // [State]
 
@@ -149,5 +133,36 @@ class FileFetcher extends AbstractPersistentJob
             throw new \Exception("Constructor missing expected config filePath.");
         }
         return $config;
+    }
+
+    private function setProcessors($config) {
+        $this->processors = self::getProcessors();
+
+        if (!isset($config['processors'])) {
+            return;
+        }
+
+        if (!is_array($config['processors'])) {
+            return;
+        }
+
+        foreach ($config['processors'] as $processorClass) {
+            $this->setProcessor($processorClass);
+        }
+
+        $this->processors = array_merge($this->processors, self::getProcessors());
+    }
+
+    private function setProcessor($processorClass) {
+        if (!class_exists($processorClass)) {
+            return;
+        }
+
+        $instance = new $processorClass();
+        if (!($instance instanceof ProcessorInterface)) {
+            return;
+        }
+
+        $this->processors = array_merge([$processorClass => $instance], $this->processors);
     }
 }
