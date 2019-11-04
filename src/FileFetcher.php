@@ -27,9 +27,9 @@ class FileFetcher extends AbstractPersistentJob
     {
         parent::__construct($identifier, $storage, $config);
 
-        $config = $this->validateConfig($config);
-
         $this->setProcessors($config);
+
+        $config = $this->validateConfig($config);
 
         // [State]
 
@@ -160,11 +160,12 @@ class FileFetcher extends AbstractPersistentJob
             return;
         }
 
-        $instance = new $processorClass();
-        if (!($instance instanceof ProcessorInterface)) {
+        $classes = class_implements($processorClass);
+        if (!in_array(ProcessorInterface::class, $classes)) {
             return;
         }
 
+        $instance = new $processorClass();
         $this->processors = array_merge([$processorClass => $instance], $this->processors);
     }
 }
