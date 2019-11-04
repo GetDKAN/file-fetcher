@@ -4,6 +4,8 @@ namespace FileFetcherTest;
 
 use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
+use FileFetcher\Processor\Local;
+use PHPUnit\Framework\TestCase;
 use Procrastinator\Result;
 
 class FileFetcherTest extends \PHPUnit\Framework\TestCase
@@ -18,7 +20,8 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
             "1",
             new Memory(),
             [
-            "filePath" => "http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv"
+              "filePath" => "http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv",
+              "processors" => [Local::class]
             ]
         );
 
@@ -36,12 +39,15 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
     {
         $local_file = __DIR__ . "/files/tiny.csv";
 
+        $config = [
+          "filePath" => $local_file,
+          "processors" => [TestCase::class]
+        ];
+
         $fetcher = FileFetcher::get(
             "1",
             new Memory(),
-            [
-            "filePath" => $local_file
-            ]
+            $config
         );
 
         $fetcher->setTimeLimit(1);
@@ -64,7 +70,8 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
     {
         $store = new Memory();
         $config = [
-          "filePath" => "https://dkan-default-content-files.s3.amazonaws.com/{$this->sampleCsvSize}_mb_sample.csv"
+          "filePath" => "https://dkan-default-content-files.s3.amazonaws.com/{$this->sampleCsvSize}_mb_sample.csv",
+          "processors" => "Bad"
         ];
 
         $fetcher = FileFetcher::get("1", $store, $config);
@@ -102,7 +109,8 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
             "1",
             new Memory(),
             [
-            "filePath" => $url
+              "filePath" => $url,
+              "processors" => ["Bad"]
             ]
         );
         $fetcher->setTimeLimit(1);

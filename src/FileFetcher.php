@@ -27,9 +27,9 @@ class FileFetcher extends AbstractPersistentJob
     {
         parent::__construct($identifier, $storage, $config);
 
-        $config = $this->validateConfig($config);
+        $this->setProcessors($config);
 
-        $this->processors = self::getProcessors();
+        $config = $this->validateConfig($config);
 
         // [State]
 
@@ -133,5 +133,39 @@ class FileFetcher extends AbstractPersistentJob
             throw new \Exception("Constructor missing expected config filePath.");
         }
         return $config;
+    }
+
+    private function setProcessors($config)
+    {
+        $this->processors = self::getProcessors();
+
+        if (!isset($config['processors'])) {
+            return;
+        }
+
+        if (!is_array($config['processors'])) {
+            return;
+        }
+
+        foreach ($config['processors'] as $processorClass) {
+            $this->setProcessor($processorClass);
+        }
+
+        $this->processors = array_merge($this->processors, self::getProcessors());
+    }
+
+    private function setProcessor($processorClass)
+    {
+        if (!class_exists($processorClass)) {
+            return;
+        }
+
+        $classes = class_implements($processorClass);
+        if (!in_array(ProcessorInterface::class, $classes)) {
+            return;
+        }
+
+        $instance = new $processorClass();
+        $this->processors = array_merge([$processorClass => $instance], $this->processors);
     }
 }
