@@ -18,7 +18,6 @@ use Procrastinator\Result;
  * FileFetcher::FileFetcher comes in an array: $state. The array looks like this:
  *
  * @snippet{lineno} src/FileFetcher.php State
- *
  */
 interface ProcessorInterface
 {

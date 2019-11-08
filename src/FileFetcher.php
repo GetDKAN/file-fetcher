@@ -7,7 +7,6 @@ use FileFetcher\Processor\ProcessorInterface;
 use FileFetcher\Processor\Remote;
 use FileFetcher\Processor\LastResort;
 use Procrastinator\Job\AbstractPersistentJob;
-use Procrastinator\Result;
 
 /**
  * @details
@@ -18,7 +17,8 @@ use Procrastinator\Result;
  */
 class FileFetcher extends AbstractPersistentJob
 {
-    private $processors = [];
+
+    private $customProcessorClasses = [];
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ class FileFetcher extends AbstractPersistentJob
 
         // [State]
 
-        foreach ($this->processors as $processor) {
+        foreach ($this->getProcessors() as $processor) {
             if ($processor->isServerCompatible($state)) {
                 $state['processor'] = get_class($processor);
                 $state = $processor->setupState($state);
@@ -63,43 +63,6 @@ class FileFetcher extends AbstractPersistentJob
         return parent::setTimeLimit($seconds);
     }
 
-    public function jsonSerialize()
-    {
-        $object = parent::jsonSerialize();
-
-        $object->processor = get_class($this->getProcessor());
-
-        return $object;
-    }
-
-    public static function hydrate(string $json, $instance = null)
-    {
-        $data = json_decode($json);
-        $object = $instance;
-
-        $reflector = new \ReflectionClass(self::class);
-
-        if (!$instance) {
-            $object = $reflector->newInstanceWithoutConstructor();
-        }
-
-        $reflector = new \ReflectionClass($object);
-
-        $p = $reflector->getParentClass()->getParentClass()->getProperty('timeLimit');
-        $p->setAccessible(true);
-        $p->setValue($object, $data->timeLimit);
-
-        $p = $reflector->getParentClass()->getParentClass()->getProperty('result');
-        $p->setAccessible(true);
-        $p->setValue($object, Result::hydrate(json_encode($data->result)));
-
-        $p = $reflector->getProperty("processors");
-        $p->setAccessible(true);
-        $p->setValue($object, self::getProcessors());
-
-        return $object;
-    }
-
     protected function runIt()
     {
         $info = $this->getProcessor()->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
@@ -107,7 +70,18 @@ class FileFetcher extends AbstractPersistentJob
         return $info['result'];
     }
 
-    private static function getProcessors()
+    private function getProcessors()
+    {
+        $processors = self::getDefaultProcessors();
+        foreach ($this->customProcessorClasses as $processorClass) {
+            if ($processor = $this->getCustomProcessorInstance($processorClass)) {
+                $processors = array_merge([$processor], $processors);
+            }
+        }
+        return $processors;
+    }
+
+    private static function getDefaultProcessors()
     {
         $processors = [];
         $processors[Local::class] = new Local();
@@ -118,7 +92,7 @@ class FileFetcher extends AbstractPersistentJob
 
     private function getProcessor(): ProcessorInterface
     {
-        return $this->processors[$this->getStateProperty('processor')];
+        return $this->getProcessors()[$this->getStateProperty('processor')];
     }
 
     private function validateConfig($config): array
@@ -137,8 +111,6 @@ class FileFetcher extends AbstractPersistentJob
 
     private function setProcessors($config)
     {
-        $this->processors = self::getProcessors();
-
         if (!isset($config['processors'])) {
             return;
         }
@@ -147,14 +119,10 @@ class FileFetcher extends AbstractPersistentJob
             return;
         }
 
-        foreach ($config['processors'] as $processorClass) {
-            $this->setProcessor($processorClass);
-        }
-
-        $this->processors = array_merge($this->processors, self::getProcessors());
+        $this->customProcessorClasses = $config['processors'];
     }
 
-    private function setProcessor($processorClass)
+    private function getCustomProcessorInstance($processorClass)
     {
         if (!class_exists($processorClass)) {
             return;
@@ -165,7 +133,6 @@ class FileFetcher extends AbstractPersistentJob
             return;
         }
 
-        $instance = new $processorClass();
-        $this->processors = array_merge([$processorClass => $instance], $this->processors);
+        return new $processorClass();
     }
 }
