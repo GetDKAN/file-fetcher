@@ -75,7 +75,7 @@ class FileFetcher extends AbstractPersistentJob
         $processors = self::getDefaultProcessors();
         foreach ($this->customProcessorClasses as $processorClass) {
             if ($processor = $this->getCustomProcessorInstance($processorClass)) {
-                $processors = array_merge([$processor], $processors);
+                $processors = array_merge([get_class($processor) => $processor], $processors);
             }
         }
         return $processors;
