@@ -82,7 +82,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
 
         $fetcher->setTimeLimit(1);
         $fetcher->run();
-        $this->assertLessThan($file_size, $fetcher->getStateProperty('total_bytes_copied'));
+        $this->assertLessThanOrEqual($file_size, $fetcher->getStateProperty('total_bytes_copied'));
         $this->assertGreaterThan(0, $fetcher->getStateProperty('total_bytes_copied'));
         $this->assertEquals($fetcher->getResult()->getStatus(), \Procrastinator\Result::STOPPED);
 
