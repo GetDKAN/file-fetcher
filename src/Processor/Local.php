@@ -8,8 +8,12 @@ class Local implements ProcessorInterface
 {
     public function isServerCompatible(array $state): bool
     {
-        $file = new \SplFileObject($state['source']);
-        return $file->isFile();
+        try {
+            $file = new \SplFileObject($state['source']);
+            return $file->isFile();
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     public function setupState(array $state): array
