@@ -40,8 +40,16 @@ class LastResort implements ProcessorInterface
         $bytesCopied = 0;
         $fin = fopen($from, "rb");
         $fout = fopen($to, "w");
-        while (!feof($fin)) {
-            $bytesCopied += fwrite($fout, fread($fin, $bytesToRead));
+        while (false !== $fin && false !== $fout && !feof($fin)) {
+            $bytesRead = fread($fin, $bytesToRead);
+            if ($bytesRead === false) {
+                break;
+            }
+            $bytesWritten = fwrite($fout, $bytesRead);
+            if ($bytesWritten === false) {
+                break;
+            }
+            $bytesCopied += $bytesWritten;
         }
         fclose($fin);
         fclose($fout);
