@@ -45,11 +45,11 @@ class LastResort implements ProcessorInterface
                 $bytesCopied += fwrite($fout, fread($fin, $bytesToRead));
             }
             $result->setStatus(Result::DONE);
-        }
-        else {
-            throw new \Exception(sprintf("Error %s file: %s.",
-              $fin === FALSE ? 'reading from' : 'writing to',
-              $fin === FALSE ? $from : $to
+        } else {
+            throw new \Exception(sprintf(
+                "Error %s file: %s.",
+                $fin === false ? 'reading from' : 'writing to',
+                $fin === false ? $from : $to
             ));
             $result->setStatus(Result::ERROR);
         }
