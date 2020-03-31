@@ -40,14 +40,24 @@ class LastResort implements ProcessorInterface
         $bytesCopied = 0;
         $fin = fopen($from, "rb");
         $fout = fopen($to, "w");
-        while (!feof($fin)) {
-            $bytesCopied += fwrite($fout, fread($fin, $bytesToRead));
+        if ($fin !== false && $fout !== false) {
+            while (!feof($fin)) {
+                $bytesCopied += fwrite($fout, fread($fin, $bytesToRead));
+            }
+            $result->setStatus(Result::DONE);
+        } else {
+            throw new \Exception(sprintf(
+                "Error %s file: %s.",
+                $fin === false ? 'reading from' : 'writing to',
+                $fin === false ? $from : $to
+            ));
+            $result->setStatus(Result::ERROR);
         }
+
         fclose($fin);
         fclose($fout);
         $state['total_bytes_copied'] = $bytesCopied;
         $state['total_bytes'] = $bytesCopied;
-        $result->setStatus(Result::DONE);
 
         return ['state' => $state, 'result' => $result];
     }
