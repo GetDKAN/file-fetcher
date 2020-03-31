@@ -42,12 +42,10 @@ class LastResort implements ProcessorInterface
         while (!feof($fin)) {
             $bytesRead = fread($fin, $bytesToRead);
             if ($bytesRead === false) {
-                $result->setStatus(Result::ERROR);
                 throw new LastResortException("reading from", $from);
             }
             $bytesWritten = fwrite($fout, $bytesRead);
             if ($bytesWritten === false) {
-                $result->setStatus(Result::ERROR);
                 throw new LastResortException("writing to", $to);
             }
             $bytesCopied += $bytesWritten;
@@ -75,7 +73,6 @@ class LastResort implements ProcessorInterface
     {
         $fin = fopen($from, "rb");
         if ($fin === false) {
-            $result->setStatus(Result::ERROR);
             throw new LastResortException("opening", $from);
         }
         return $fin;
@@ -96,7 +93,6 @@ class LastResort implements ProcessorInterface
         $this->deleteFile($to);
         $fout = fopen($to, "w");
         if ($fout === false) {
-            $result->setStatus(Result::ERROR);
             throw new LastResortException("creating", $to);
         }
         return $fout;
