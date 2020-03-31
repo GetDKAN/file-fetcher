@@ -4,6 +4,7 @@ namespace FileFetcherTest;
 
 use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
+use FileFetcher\Processor\LastResort;
 use FileFetcher\Processor\Local;
 use PHPUnit\Framework\TestCase;
 use Procrastinator\Result;
@@ -117,6 +118,21 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $result = $fetcher->run();
         $this->assertEquals(Result::DONE, $result->getStatus());
         $this->assertEquals(2853, json_decode($result->getData())->total_bytes_copied);
+    }
+
+    public function testLastResortErrorOpening()
+    {
+        $fetcher = FileFetcher::get(
+            "1",
+            new Memory(),
+            [
+                "filePath" => __DIR__ . "/files/non-existent.csv",
+                "processors" => [LastResort::class],
+            ]
+        );
+        $fetcher->setTimeLimit(1);
+        $result = $fetcher->run();
+        $this->assertEquals(Result::ERROR, $result->getStatus());
     }
 
     public function tearDown(): void
