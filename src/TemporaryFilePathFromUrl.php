@@ -7,7 +7,11 @@ trait TemporaryFilePathFromUrl
     private function getTemporaryFilePath(array $state)
     {
         $info = parse_url($state['source']);
-        $file_name = str_replace(".", "_", $info["host"]) . str_replace("/", "_", $info['path']);
+        $file_name = "";
+        if (isset($info["host"])) {
+            $file_name .= str_replace(".", "_", $info["host"]);
+        }
+        $file_name .= str_replace("/", "_", $info['path']);
         return $this->getTemporaryFile($file_name, $state);
     }
 
