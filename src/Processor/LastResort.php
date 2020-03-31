@@ -2,6 +2,7 @@
 
 namespace FileFetcher\Processor;
 
+use FileFetcher\LastResortException;
 use FileFetcher\TemporaryFilePathFromUrl;
 use Procrastinator\Result;
 
@@ -32,34 +33,73 @@ class LastResort implements ProcessorInterface
     {
         // 1 MB.
         $bytesToRead = 1024 * 1000;
-
+        $bytesCopied = 0;
         $from = $state['source'];
         $to = $state['destination'];
-        $this->deleteFile($to);
+        $fin = $this->ensureExistsForReading($from);
+        $fout = $this->ensureCreatingForWriting($to);
 
-        $bytesCopied = 0;
-        $fin = fopen($from, "rb");
-        $fout = fopen($to, "w");
-        if ($fin !== false && $fout !== false) {
-            while (!feof($fin)) {
-                $bytesCopied += fwrite($fout, fread($fin, $bytesToRead));
+        while (!feof($fin)) {
+            $bytesRead = fread($fin, $bytesToRead);
+            if ($bytesRead === false) {
+                $result->setStatus(Result::ERROR);
+                throw new LastResortException("reading from", $from);
             }
-            $result->setStatus(Result::DONE);
-        } else {
-            throw new \Exception(sprintf(
-                "Error %s file: %s.",
-                $fin === false ? 'reading from' : 'writing to',
-                $fin === false ? $from : $to
-            ));
-            $result->setStatus(Result::ERROR);
+            $bytesWritten = fwrite($fout, $bytesRead);
+            if ($bytesWritten === false) {
+                $result->setStatus(Result::ERROR);
+                throw new LastResortException("writing to", $to);
+            }
+            $bytesCopied += $bytesWritten;
         }
 
+        $result->setStatus(Result::DONE);
         fclose($fin);
         fclose($fout);
         $state['total_bytes_copied'] = $bytesCopied;
         $state['total_bytes'] = $bytesCopied;
 
         return ['state' => $state, 'result' => $result];
+    }
+
+    /**
+     * Ensure the target file can be read from.
+     *
+     * @param string $from
+     *   The target filename.
+     *
+     * @return false|resource
+     * @throws \FileFetcher\LastResortException
+     */
+    private function ensureExistsForReading(string $from)
+    {
+        $fin = fopen($from, "rb");
+        if ($fin === false) {
+            $result->setStatus(Result::ERROR);
+            throw new LastResortException("opening", $from);
+        }
+        return $fin;
+    }
+
+    /**
+     * Ensure the destination file can be created.
+     *
+     * @param string $to
+     *   The destination filename.
+     *
+     * @return false|resource
+     * @throws \FileFetcher\LastResortException
+     */
+    private function ensureCreatingForWriting(string $to)
+    {
+        // Delete destination first to avoid appending if existing.
+        $this->deleteFile($to);
+        $fout = fopen($to, "w");
+        if ($fout === false) {
+            $result->setStatus(Result::ERROR);
+            throw new LastResortException("creating", $to);
+        }
+        return $fout;
     }
 
     private function deleteFile($file)
