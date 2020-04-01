@@ -11,7 +11,7 @@ use Procrastinator\Result;
 
 class FileFetcherTest extends \PHPUnit\Framework\TestCase
 {
-    private $sampleCsvSize = 5;
+    private $sampleCsvSize = 50;
 
     public function testRemote()
     {
