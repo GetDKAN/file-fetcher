@@ -11,7 +11,7 @@ use Procrastinator\Result;
 
 class FileFetcherTest extends \PHPUnit\Framework\TestCase
 {
-    private $sampleCsvSize = 50;
+    private $sampleCsvSize = 5;
 
     public function testRemote()
     {
@@ -105,7 +105,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
 
     public function testIncompatibleServer()
     {
-        $url = "https://data.medicare.gov/api/views/42wc-33ci/rows.csv?accessType=DOWNLOAD&sorting=true";
+        $url = "https://data.medicare.gov/api/views/wue8-3vwe/rows.csv?accessType=DOWNLOAD&sorting=true";
         $fetcher = FileFetcher::get(
             "1",
             new Memory(),
@@ -117,7 +117,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $fetcher->setTimeLimit(1);
         $result = $fetcher->run();
         $this->assertEquals(Result::DONE, $result->getStatus());
-        $this->assertEquals(2853, json_decode($result->getData())->total_bytes_copied);
+        $this->assertEquals(380, json_decode($result->getData())->total_bytes_copied);
     }
 
     public function testLastResortErrorOpening()
