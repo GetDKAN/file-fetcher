@@ -76,6 +76,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $result = $fetcher->run();
         $data = json_decode($result->getData());
         $this->assertEquals($local_file, $data->destination);
+        $this->assertFalse($fetcher->getStateProperty('keep_original_filename'));
         $this->assertFalse($data->temporary);
     }
 
