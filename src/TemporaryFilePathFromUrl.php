@@ -25,6 +25,11 @@ trait TemporaryFilePathFromUrl
      */
     private function getTemporaryFile(string $filename, array $state): string
     {
+        if (isset($state['keep_original_filename']) && $state['keep_original_filename']) {
+            $file_name = basename($state['source']);
+            return "{$state['temporary_directory']}/{$file_name}";
+        }
+
         return $state['temporary_directory'] . '/' . $this->sanitizeString($filename);
     }
 
