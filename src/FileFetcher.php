@@ -87,7 +87,7 @@ class FileFetcher extends AbstractPersistentJob
         $processors = [];
         $processors[Local::class] = new Local();
         $processors[Remote::class] = new Remote();
-        $processors[LastResort::class] =  new LastResort();
+        $processors[LastResort::class] = new LastResort();
         return $processors;
     }
 
