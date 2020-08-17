@@ -6,6 +6,7 @@ use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
 use FileFetcher\Processor\LastResort;
 use FileFetcher\Processor\Local;
+use FileFetcher\Processor\Remote;
 use PHPUnit\Framework\TestCase;
 use Procrastinator\Result;
 
@@ -38,18 +39,19 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
 
     public function testKeepOriginalFilename() {
         $fetcher = FileFetcher::get(
-            "1",
+            "2",
             new Memory(),
             [
                 "filePath" => "http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv",
-                "processors" => [Local::class]
+                "processors" => [Remote::class],
+                "keep_original_filename" => true,
             ]
         );
 
         $result = $fetcher->run();
 
         $data = json_decode($result->getData());
-        $filepath = "/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv";
+        $filepath = "/tmp/Sacramentorealestatetransactions.csv";
         $this->assertEquals($filepath, $data->destination);
         $this->assertTrue($data->temporary);
     }
