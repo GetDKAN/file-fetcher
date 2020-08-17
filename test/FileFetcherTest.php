@@ -160,6 +160,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         parent::tearDown();
         $files = [
           "/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv",
+          "/tmp/Sacramentorealestatetransactions.csv",
           "/tmp/dkan_default_content_files_s3_amazonaws_com_{$this->sampleCsvSize}_mb_sample.csv",
           "/tmp/data_medicare_gov_api_views_42wc_33ci_rows.csv",
         ];
