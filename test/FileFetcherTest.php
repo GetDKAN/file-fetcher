@@ -37,7 +37,8 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($data->temporary);
     }
 
-    public function testKeepOriginalFilename() {
+    public function testKeepOriginalFilename()
+    {
         $fetcher = FileFetcher::get(
             "2",
             new Memory(),
