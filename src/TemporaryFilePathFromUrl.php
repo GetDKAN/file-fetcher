@@ -17,10 +17,9 @@ trait TemporaryFilePathFromUrl
     private function getTemporaryFilePath(array $state): string
     {
         if ($state['keep_original_filename']) {
-          return $this->getTemporaryFileOriginalName($state);
-        }
-        else {
-          return $this->getTemporaryFile($state);
+            return $this->getTemporaryFileOriginalName($state);
+        } else {
+            return $this->getTemporaryFile($state);
         }
     }
 
