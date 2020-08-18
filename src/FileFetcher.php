@@ -38,6 +38,7 @@ class FileFetcher extends AbstractPersistentJob
             'total_bytes' => 0,
             'total_bytes_copied' => 0,
             'temporary' => false,
+            'keep_original_filename' => $config['keep_original_filename'] ?? false,
             'destination' => $config['filePath'],
             'temporary_directory' => $config['temporaryDirectory'],
         ];
@@ -86,7 +87,7 @@ class FileFetcher extends AbstractPersistentJob
         $processors = [];
         $processors[Local::class] = new Local();
         $processors[Remote::class] = new Remote();
-        $processors[LastResort::class] =  new LastResort();
+        $processors[LastResort::class] = new LastResort();
         return $processors;
     }
 

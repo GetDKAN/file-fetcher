@@ -6,6 +6,7 @@ use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
 use FileFetcher\Processor\LastResort;
 use FileFetcher\Processor\Local;
+use FileFetcher\Processor\Remote;
 use PHPUnit\Framework\TestCase;
 use Procrastinator\Result;
 
@@ -36,6 +37,26 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($data->temporary);
     }
 
+    public function testKeepOriginalFilename()
+    {
+        $fetcher = FileFetcher::get(
+            "2",
+            new Memory(),
+            [
+                "filePath" => "http://samplecsvs.s3.amazonaws.com/Sacramentorealestatetransactions.csv",
+                "processors" => [Remote::class],
+                "keep_original_filename" => true,
+            ]
+        );
+
+        $result = $fetcher->run();
+
+        $data = json_decode($result->getData());
+        $filepath = "/tmp/Sacramentorealestatetransactions.csv";
+        $this->assertEquals($filepath, $data->destination);
+        $this->assertTrue($data->temporary);
+    }
+
     public function testLocal()
     {
         $local_file = __DIR__ . "/files/tiny.csv";
@@ -55,6 +76,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         $result = $fetcher->run();
         $data = json_decode($result->getData());
         $this->assertEquals($local_file, $data->destination);
+        $this->assertFalse($fetcher->getStateProperty('keep_original_filename'));
         $this->assertFalse($data->temporary);
     }
 
@@ -140,6 +162,7 @@ class FileFetcherTest extends \PHPUnit\Framework\TestCase
         parent::tearDown();
         $files = [
           "/tmp/samplecsvs_s3_amazonaws_com_sacramentorealestatetransactions.csv",
+          "/tmp/Sacramentorealestatetransactions.csv",
           "/tmp/dkan_default_content_files_s3_amazonaws_com_{$this->sampleCsvSize}_mb_sample.csv",
           "/tmp/data_medicare_gov_api_views_42wc_33ci_rows.csv",
         ];
