@@ -65,7 +65,7 @@ class FileFetcher extends AbstractPersistentJob
 
     protected function runIt()
     {
-        $state = $this->getProcessor()->setupState($state);
+        $state = $this->getProcessor()->setupState($this->getState());
         $this->getResult()->setData(json_encode($state));
         $info = $this->getProcessor()->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
         $this->setState($info['state']);
