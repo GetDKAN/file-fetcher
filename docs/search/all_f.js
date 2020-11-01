@@ -1,0 +1,23 @@
+var searchData=
+[
+  ['job_3413',['Job',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Job_1_1Job.html',1,'Procrastinator::Job']]],
+  ['job_2ephp_3414',['Job.php',['../Job_8php.html',1,'']]],
+  ['json_3415',['Json',['../classPHPUnit_1_1Util_1_1Json.html',1,'PHPUnit::Util']]],
+  ['json_2ephp_3416',['Json.php',['../Json_8php.html',1,'']]],
+  ['jsonmatches_3417',['JsonMatches',['../classPHPUnit_1_1Framework_1_1Constraint_1_1JsonMatches.html',1,'PHPUnit::Framework::Constraint']]],
+  ['jsonmatches_2ephp_3418',['JsonMatches.php',['../JsonMatches_8php.html',1,'']]],
+  ['jsonmatcheserrormessageprovider_3419',['JsonMatchesErrorMessageProvider',['../classPHPUnit_1_1Framework_1_1Constraint_1_1JsonMatchesErrorMessageProvider.html',1,'PHPUnit::Framework::Constraint']]],
+  ['jsonmatcheserrormessageprovider_2ephp_3420',['JsonMatchesErrorMessageProvider.php',['../JsonMatchesErrorMessageProvider_8php.html',1,'']]],
+  ['jsonmatcheserrormessageprovidertest_3421',['JsonMatchesErrorMessageProviderTest',['../classPHPUnit_1_1Framework_1_1Constraint_1_1JsonMatchesErrorMessageProviderTest.html',1,'PHPUnit::Framework::Constraint']]],
+  ['jsonmatcheserrormessageprovidertest_2ephp_3422',['JsonMatchesErrorMessageProviderTest.php',['../JsonMatchesErrorMessageProviderTest_8php.html',1,'']]],
+  ['jsonmatchestest_3423',['JsonMatchesTest',['../classPHPUnit_1_1Framework_1_1Constraint_1_1JsonMatchesTest.html',1,'PHPUnit::Framework::Constraint']]],
+  ['jsonmatchestest_2ephp_3424',['JsonMatchesTest.php',['../JsonMatchesTest_8php.html',1,'']]],
+  ['jsonobjectmemory_3425',['JsonObjectMemory',['../classContracts_1_1Mock_1_1Storage_1_1JsonObjectMemory.html',1,'Contracts::Mock::Storage']]],
+  ['jsonobjectmemory_2ephp_3426',['JsonObjectMemory.php',['../JsonObjectMemory_8php.html',1,'']]],
+  ['jsonserialize_3427',['jsonSerialize',['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Job_1_1Job.html#a2f50540b6cd43a5ac5cfc0529208c505',1,'Procrastinator\Job::Job::jsonSerialize()'],['https://getdkan.github.io/procrastinator/classProcrastinator_1_1Result.html#a53184752513e4e339f60477a2cdfb104',1,'Procrastinator::Result::jsonSerialize()']]],
+  ['jsonserializetrait_2ephp_3428',['JsonSerializeTrait.php',['../JsonSerializeTrait_8php.html',1,'']]],
+  ['jsontest_3429',['JsonTest',['../classPHPUnit_1_1Util_1_1JsonTest.html',1,'PHPUnit::Util']]],
+  ['jsontest_2ephp_3430',['JsonTest.php',['../JsonTest_8php.html',1,'']]],
+  ['junit_3431',['JUnit',['../classPHPUnit_1_1Util_1_1Log_1_1JUnit.html',1,'PHPUnit::Util::Log']]],
+  ['junit_2ephp_3432',['JUnit.php',['../JUnit_8php.html',1,'']]]
+];
