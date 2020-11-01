@@ -99,10 +99,6 @@ class FileFetcherTest extends TestCase
 
         $fetcher = FileFetcher::get("1", $store, $config);
 
-        //
-
-        //$this->assertLessThan($file_size, $fetcher->getStateProperty('total_bytes_copied'));
-
         $fetcher->setTimeLimit(1);
         $fetcher->run();
         $file_size = $fetcher->getStateProperty('total_bytes');
@@ -110,7 +106,7 @@ class FileFetcherTest extends TestCase
         $this->assertGreaterThan(0, $fetcher->getStateProperty('total_bytes_copied'));
         $this->assertEquals($fetcher->getResult()->getStatus(), \Procrastinator\Result::STOPPED);
 
-        $fetcher2 = \FileFetcher\FileFetcher::get("1", $store, $config);
+        $fetcher2 = FileFetcher::get("1", $store, $config);
 
         $fetcher2->setTimeLimit(PHP_INT_MAX);
         $fetcher2->run();
