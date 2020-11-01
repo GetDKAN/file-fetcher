@@ -48,7 +48,6 @@ class FileFetcher extends AbstractPersistentJob
         foreach ($this->getProcessors() as $processor) {
             if ($processor->isServerCompatible($state)) {
                 $state['processor'] = get_class($processor);
-                $state = $processor->setupState($state);
                 break;
             }
         }
@@ -66,6 +65,8 @@ class FileFetcher extends AbstractPersistentJob
 
     protected function runIt()
     {
+        $state = $this->getProcessor()->setupState($this->getState());
+        $this->getResult()->setData(json_encode($state));
         $info = $this->getProcessor()->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
         $this->setState($info['state']);
         return $info['result'];
