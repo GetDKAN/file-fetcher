@@ -3,12 +3,22 @@
 namespace FileFetcher\Processor;
 
 use FileFetcher\LastResortException;
+use FileFetcher\PhpFunctionsBridgeTrait;
 use FileFetcher\TemporaryFilePathFromUrl;
 use Procrastinator\Result;
 
 class LastResort implements ProcessorInterface
 {
     use TemporaryFilePathFromUrl;
+    use PhpFunctionsBridgeTrait;
+
+    /**
+     * LastResort constructor.
+     */
+    public function __construct()
+    {
+        $this->initializePhpFunctionsBridge();
+    }
 
     public function isServerCompatible(array $state): bool
     {
@@ -34,13 +44,16 @@ class LastResort implements ProcessorInterface
         // 1 MB.
         $bytesToRead = 1024 * 1000;
         $bytesCopied = 0;
+        if (!isset($state['source']) && !isset($state['destination'])) {
+            throw new \Exception("Incorrect state missing source, destination, or both.");
+        }
         $from = $state['source'];
         $to = $state['destination'];
         $fin = $this->ensureExistsForReading($from);
         $fout = $this->ensureCreatingForWriting($to);
 
         while (!feof($fin)) {
-            $bytesRead = fread($fin, $bytesToRead);
+            $bytesRead = $this->php->fread($fin, $bytesToRead);
             if ($bytesRead === false) {
                 throw new LastResortException("reading from", $from);
             }
@@ -71,7 +84,7 @@ class LastResort implements ProcessorInterface
      */
     private function ensureExistsForReading(string $from)
     {
-        $fin = fopen($from, "rb");
+        $fin = @$this->php->fopen($from, "rb");
         if ($fin === false) {
             throw new LastResortException("opening", $from);
         }
@@ -91,7 +104,7 @@ class LastResort implements ProcessorInterface
     {
         // Delete destination first to avoid appending if existing.
         $this->deleteFile($to);
-        $fout = fopen($to, "w");
+        $fout = $this->php->fopen($to, "w");
         if ($fout === false) {
             throw new LastResortException("creating", $to);
         }

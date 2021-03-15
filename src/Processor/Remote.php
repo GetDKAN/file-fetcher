@@ -2,12 +2,16 @@
 
 namespace FileFetcher\Processor;
 
-use FileFetcher\TemporaryFilePathFromUrl;
 use Procrastinator\Result;
 
-class Remote implements ProcessorInterface
+class Remote extends AbstractChunkedProcessor
 {
-    use TemporaryFilePathFromUrl;
+
+    protected function getFileSize(string $filePath): int
+    {
+        $headers = $this->getHeaders($filePath);
+        return $headers['Content-Length'];
+    }
 
     public function isServerCompatible(array $state): bool
     {
@@ -20,104 +24,29 @@ class Remote implements ProcessorInterface
         return false;
     }
 
-    public function setupState(array $state): array
+    protected function getChunk(string $filePath, int $start, int $end)
     {
-        $state['destination'] = $this->getTemporaryFilePath($state);
-        $state['temporary'] = true;
-        $state['total_bytes'] = $this->getRemoteFileSize($state['source']);
-
-        if (file_exists($state['destination'])) {
-            $state['total_bytes_copied'] = filesize($state['destination']);
-        }
-
-        return $state;
-    }
-
-    public function isTimeLimitIncompatible(): bool
-    {
-        return false;
-    }
-
-    public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
-    {
-        $destinationFile = $state['destination'];
-        $total = $state['total_bytes_copied'];
-
-        $expiration = time() + $timeLimit;
-
-        while ($chunk = $this->getChunk($state)) {
-            $bytesWritten = $this->createOrAppend($destinationFile, $chunk);
-
-            if ($bytesWritten !== strlen($chunk)) {
-                throw new \RuntimeException(
-                    "Unable to fetch {$state['source']}. " .
-                    " Reason: Failed to write to destination " . $destinationFile,
-                    0
-                );
-            }
-
-            $total += $bytesWritten;
-            $state['total_bytes_copied'] = $total;
-
-            $currentTime = time();
-            if ($currentTime > $expiration) {
-                $result->setStatus(Result::STOPPED);
-                return ['state' => $state, 'result' => $result];
-            }
-        }
-
-        $result->setStatus(Result::DONE);
-        return ['state' => $state, 'result' => $result];
-    }
-
-    private function createOrAppend($filePath, $chunk)
-    {
-        if (!file_exists($filePath)) {
-            $bytesWritten = file_put_contents($filePath, $chunk);
-        } else {
-            $bytesWritten = file_put_contents($filePath, $chunk, FILE_APPEND);
-        }
-        return $bytesWritten;
-    }
-
-    private function getChunk(array $state)
-    {
-        // 1 MB.
-        $bytesToRead = 1024 * 1000;
-
-        $url = $state['source'];
-        $start = $state['total_bytes_copied'];
-        $end = $start + $bytesToRead;
-
-        if ($end > $state['total_bytes']) {
-            $end = $state['total_bytes'];
-        }
-
-        if ($start == $end) {
-            return false;
-        }
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RANGE, "{$start}-{$end}");
-        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $result = curl_exec($ch);
-        curl_close($ch);
+        $ch = $this->php->curl_init();
+        $this->php->curl_setopt($ch, CURLOPT_URL, $filePath);
+        $this->php->curl_setopt($ch, CURLOPT_RANGE, "{$start}-{$end}");
+        $this->php->curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+        $this->php->curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $result = $this->php->curl_exec($ch);
+        $this->php->curl_close($ch);
         return $result;
     }
 
     private function getHeaders($url)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_NOBODY, true);
+        $ch = $this->php->curl_init();
+        $this->php->curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $this->php->curl_setopt($ch, CURLOPT_URL, $url);
+        $this->php->curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+        $this->php->curl_setopt($ch, CURLOPT_HEADER, true);
+        $this->php->curl_setopt($ch, CURLOPT_NOBODY, true);
 
-        $headers = $this->parseHeaders(curl_exec($ch));
-        curl_close($ch);
+        $headers = $this->parseHeaders($this->php->curl_exec($ch));
+        $this->php->curl_close($ch);
         return $headers;
     }
 
@@ -147,11 +76,5 @@ class Remote implements ProcessorInterface
         }
 
         return ['key' => $key, 'value' => $value];
-    }
-
-    private function getRemoteFileSize($url)
-    {
-        $headers = $this->getHeaders($url);
-        return $headers['Content-Length'];
     }
 }

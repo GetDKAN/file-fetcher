@@ -4,34 +4,36 @@ namespace FileFetcher\Processor;
 
 use Procrastinator\Result;
 
-class Local implements ProcessorInterface
+class Local extends AbstractChunkedProcessor
 {
+
+    protected function getFileSize(string $filePath): int
+    {
+        return $this->php->filesize($filePath);
+    }
+
     public function isServerCompatible(array $state): bool
     {
-        try {
-            $file = new \SplFileObject($state['source']);
-            return $file->isFile();
-        } catch (\Exception $e) {
-            return false;
+        $path = $state['source'];
+
+        if ($this->php->file_exists($path)) {
+            if (!$this->php->is_dir($path)) {
+                return true;
+            }
+            throw new \Exception('A real path was given but it does not point to a file.');
         }
+
+        return false;
     }
 
-    public function setupState(array $state): array
+    protected function getChunk(string $filePath, int $start, int $end)
     {
-        $size = filesize($state['source']);
-        $state['total_bytes'] = $size;
-        $state['total_bytes_copied'] = $size;
-        return $state;
+        $fp = fopen($filePath, 'r');
+        fseek($fp, $start);
+        $data = fgets($fp, $end - $start);
+        fclose($fp);
+        return $data;
     }
 
-    public function isTimeLimitIncompatible(): bool
-    {
-        return true;
-    }
 
-    public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
-    {
-        $result->setStatus(Result::DONE);
-        return ['state' => $state, 'result' => $result];
-    }
 }
