@@ -3,7 +3,6 @@
 namespace FileFetcherTests\Processor;
 
 use Contracts\Mock\Storage\Memory;
-use Drupal\json_form_widget\ObjectHelper;
 use FileFetcher\FileFetcher;
 use FileFetcher\PhpFunctionsBridge;
 use FileFetcher\Processor\Remote;
@@ -23,7 +22,7 @@ class RemoteTest extends TestCase
             new Memory(),
             [
                 "filePath" => 'http://notreal.blah/notacsv.csv',
-                "processors" => [FakeRemote::class]
+                "processors" => [\FileFetcherTests\Mock\FakeRemote::class]
             ]
         );
 
@@ -55,7 +54,12 @@ class RemoteTest extends TestCase
 
         $processor = new Remote();
         $processor->setPhpFunctionsBridge($bridge);
-        $processor->copy(['source' => 'hello', 'destination' => 'goodbye', 'total_bytes_copied' => 1, 'total_bytes' => 10], new Result());
+        $processor->copy([
+          'source' => 'hello',
+          'destination' => 'goodbye',
+          'total_bytes_copied' => 1,
+          'total_bytes' => 10,
+        ], new Result());
         $this->assertTrue(true);
     }
 
@@ -72,26 +76,12 @@ class RemoteTest extends TestCase
         $processor = new Remote();
         $processor->setPhpFunctionsBridge($bridge);
         $this->assertTrue(
-            $processor->isServerCompatible(['source' => 'hello', 'destination' => 'goodbye', 'total_bytes_copied' => 1, 'total_bytes' => 10])
+            $processor->isServerCompatible([
+              'source' => 'hello',
+              'destination' => 'goodbye',
+              'total_bytes_copied' => 1,
+              'total_bytes' => 10,
+            ])
         );
-    }
-}
-
-class FakeRemote extends Remote
-{
-    protected function getHeaders($url)
-    {
-        $twoMegaBytes = 20 * 1000 * 1000;
-        return Remote::parseHeaders("Accept-Ranges:TRUE\nContent-Length:{$twoMegaBytes}");
-    }
-
-    protected function getChunk(string $filePath, int $start, int $end)
-    {
-        $data = "";
-        $numberOfBytes = $end - $start;
-        for ($i = 1; $i < $numberOfBytes; $i++) {
-            $data .= "A";
-        }
-        return !empty(trim($data)) ? $data . PHP_EOL : false;
     }
 }
