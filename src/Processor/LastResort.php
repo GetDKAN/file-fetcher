@@ -49,27 +49,22 @@ class LastResort implements ProcessorInterface
 
     public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
     {
-        // 1 MB.
-        $bytesToRead = 1024 * 1000;
+        list($from, $to) = $this->validateAndGetInfoFromState($state);
+
+        $bytesToRead = 10 * 1000 * 1000;
         $bytesCopied = 0;
-        if (!isset($state['source']) && !isset($state['destination'])) {
-            throw new \Exception("Incorrect state missing source, destination, or both.");
-        }
-        $from = $state['source'];
-        $to = $state['destination'];
+
         $fin = $this->ensureExistsForReading($from);
         $fout = $this->ensureCreatingForWriting($to);
 
         while (!feof($fin)) {
-            $bytesRead = $this->php->fread($fin, $bytesToRead);
-            if ($bytesRead === false) {
-                throw new LastResortException("reading from", $from);
-            }
-            $bytesWritten = fwrite($fout, $bytesRead);
-            if ($bytesWritten === false) {
-                throw new LastResortException("writing to", $to);
-            }
-            $bytesCopied += $bytesWritten;
+            $bytesCopied += $this->readAndWrite(
+                $fin,
+                $fout,
+                $bytesToRead,
+                $to,
+                $from
+            );
         }
 
         $result->setStatus(Result::DONE);
@@ -79,6 +74,27 @@ class LastResort implements ProcessorInterface
         $state['total_bytes'] = $bytesCopied;
 
         return ['state' => $state, 'result' => $result];
+    }
+
+    private function readAndWrite($fin, $fout, $bytesToRead, $to, $from): int
+    {
+        $bytesRead = $this->php->fread($fin, $bytesToRead);
+        if ($bytesRead === false) {
+            throw new LastResortException("reading from", $from);
+        }
+        $bytesWritten = fwrite($fout, $bytesRead);
+        if ($bytesWritten === false) {
+            throw new LastResortException("writing to", $to);
+        }
+        return $bytesWritten;
+    }
+
+    private function validateAndGetInfoFromState($state)
+    {
+        if (!isset($state['source']) && !isset($state['destination'])) {
+            throw new \Exception("Incorrect state missing source, destination, or both.");
+        }
+        return [$state['source'], $state['destination']];
     }
 
     /**
