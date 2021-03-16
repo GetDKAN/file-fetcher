@@ -35,8 +35,8 @@ class FileFetcherTest extends TestCase
         $state = $fetcher->getState();
 
         $this->assertEquals(
-          file_get_contents($state['source']),
-          file_get_contents($state['destination'])
+            file_get_contents($state['source']),
+            file_get_contents($state['destination'])
         );
 
         unlink($state['destination']);
@@ -65,7 +65,8 @@ class FileFetcherTest extends TestCase
         unlink($state['destination']);
     }
 
-    public function testConfigValidationErrorConfigurationMissing() {
+    public function testConfigValidationErrorConfigurationMissing()
+    {
         $this->expectExceptionMessage('Constructor missing expected config filePath.');
         FileFetcher::get(
             "2",
@@ -73,7 +74,8 @@ class FileFetcherTest extends TestCase
         );
     }
 
-    public function testConfigValidationErrorMissingFilePath() {
+    public function testConfigValidationErrorMissingFilePath()
+    {
         $this->expectExceptionMessage('Constructor missing expected config filePath.');
         FileFetcher::get(
             "2",
@@ -82,7 +84,8 @@ class FileFetcherTest extends TestCase
         );
     }
 
-    public function testCustomProcessorsValidationIsNotAnArray() {
+    public function testCustomProcessorsValidationIsNotAnArray()
+    {
         $fetcher = FileFetcher::get(
             "2",
             new Memory(),
@@ -95,7 +98,8 @@ class FileFetcherTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testCustomProcessorsValidationNotAClass() {
+    public function testCustomProcessorsValidationNotAClass()
+    {
         $fetcher = FileFetcher::get(
             "2",
             new Memory(),
@@ -108,7 +112,8 @@ class FileFetcherTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testCustomProcessorsValidationImproperClass() {
+    public function testCustomProcessorsValidationImproperClass()
+    {
         $fetcher = FileFetcher::get(
             "2",
             new Memory(),
@@ -120,6 +125,4 @@ class FileFetcherTest extends TestCase
         // Not sure what to assert.
         $this->assertTrue(true);
     }
-
-
 }

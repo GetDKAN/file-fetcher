@@ -33,8 +33,7 @@ class RemoteTest extends TestCase
         do {
             $result = $fetcher->run();
             $counter++;
-        }
-        while ($result->getStatus() == Result::STOPPED);
+        } while ($result->getStatus() == Result::STOPPED);
 
         $state = $fetcher->getState();
 
@@ -44,40 +43,42 @@ class RemoteTest extends TestCase
         unlink($state['destination']);
     }
 
-    public function testCurlCopy() {
-      $options = (new Options())
+    public function testCurlCopy()
+    {
+        $options = (new Options())
         ->add('curl_exec', "")
         ->index(0);
 
-      $bridge = (new Chain($this))
+        $bridge = (new Chain($this))
         ->add(PhpFunctionsBridge::class, '__call', $options)
         ->getMock();
 
-      $processor = new Remote();
-      $processor->setPhpFunctionsBridge($bridge);
-      $processor->copy(['source' => 'hello', 'destination' => 'goodbye', 'total_bytes_copied' => 1, 'total_bytes' => 10], new Result());
-      $this->assertTrue(true);
+        $processor = new Remote();
+        $processor->setPhpFunctionsBridge($bridge);
+        $processor->copy(['source' => 'hello', 'destination' => 'goodbye', 'total_bytes_copied' => 1, 'total_bytes' => 10], new Result());
+        $this->assertTrue(true);
     }
 
-  public function testCurlHeaders() {
-    $options = (new Options())
-      ->add('curl_exec', "Accept-Ranges:TRUE\nContent-Length:10")
-      ->index(0);
+    public function testCurlHeaders()
+    {
+        $options = (new Options())
+        ->add('curl_exec', "Accept-Ranges:TRUE\nContent-Length:10")
+        ->index(0);
 
-    $bridge = (new Chain($this))
-      ->add(PhpFunctionsBridge::class, '__call', $options)
-      ->getMock();
+        $bridge = (new Chain($this))
+        ->add(PhpFunctionsBridge::class, '__call', $options)
+        ->getMock();
 
-    $processor = new Remote();
-    $processor->setPhpFunctionsBridge($bridge);
-    $this->assertTrue(
-      $processor->isServerCompatible(['source' => 'hello', 'destination' => 'goodbye', 'total_bytes_copied' => 1, 'total_bytes' => 10])
-    );
-  }
-
+        $processor = new Remote();
+        $processor->setPhpFunctionsBridge($bridge);
+        $this->assertTrue(
+            $processor->isServerCompatible(['source' => 'hello', 'destination' => 'goodbye', 'total_bytes_copied' => 1, 'total_bytes' => 10])
+        );
+    }
 }
 
-class FakeRemote extends Remote {
+class FakeRemote extends Remote
+{
     protected function getHeaders($url)
     {
         $twoMegaBytes = 20 * 1000 * 1000;
@@ -93,5 +94,4 @@ class FakeRemote extends Remote {
         }
         return !empty(trim($data)) ? $data . PHP_EOL : false;
     }
-
 }

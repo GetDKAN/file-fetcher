@@ -1,6 +1,5 @@
 <?php
 
-
 namespace FileFetcherTests\Processor;
 
 use Contracts\Mock\Storage\Memory;
@@ -49,7 +48,8 @@ class LastResortTest extends TestCase
         $processor->copy([], new Result());
     }
 
-    function testOpeningSourceException() {
+    function testOpeningSourceException()
+    {
         $this->expectExceptionMessage('Error opening file: hello.');
         $state = ['source' => 'hello', 'destination' => 'goodbye'];
 
@@ -67,7 +67,8 @@ class LastResortTest extends TestCase
         $processor->copy($state, new Result());
     }
 
-    function testOpeningDestinationException() {
+    function testOpeningDestinationException()
+    {
         $this->expectExceptionMessage('Error creating file: goodbye.');
         $state = ['source' => 'hello', 'destination' => 'goodbye'];
 
@@ -89,4 +90,3 @@ class LastResortTest extends TestCase
         $processor->copy($state, new Result());
     }
 }
-
