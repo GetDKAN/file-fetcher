@@ -103,5 +103,4 @@ abstract class AbstractChunkedProcessor implements ProcessorInterface
 
         return $this->getChunk($filePath, $start, $end);
     }
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace FileFetcher;
 
 /**
@@ -10,15 +9,13 @@ namespace FileFetcher;
 class PhpFunctionsBridge
 {
     /**
-     *
      * Magic call to intercept any function pass to it.
      *
      * @param string $func The function to call.
      *
-     * @param array $args Arguments passed to the function.
+     * @param array  $args Arguments passed to the function.
      *
      * @return mixed The result of the function call.
-     *
      */
     public function __call($func, $args)
     {

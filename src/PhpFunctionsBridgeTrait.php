@@ -1,8 +1,6 @@
 <?php
 
-
 namespace FileFetcher;
-
 
 trait PhpFunctionsBridgeTrait
 {
@@ -11,12 +9,13 @@ trait PhpFunctionsBridgeTrait
      */
     protected $php;
 
-    private function initializePhpFunctionsBridge() {
+    private function initializePhpFunctionsBridge()
+    {
         $this->php = new PhpFunctionsBridge();
     }
 
-    public function setPhpFunctionsBridge(PhpFunctionsBridge $bridge) {
+    public function setPhpFunctionsBridge(PhpFunctionsBridge $bridge)
+    {
         $this->php = $bridge;
     }
-
 }

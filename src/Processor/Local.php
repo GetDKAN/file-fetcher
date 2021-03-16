@@ -30,6 +30,4 @@ class Local extends AbstractChunkedProcessor
         fclose($fp);
         return $data;
     }
-
-
 }
