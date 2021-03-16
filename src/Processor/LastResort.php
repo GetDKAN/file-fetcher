@@ -62,8 +62,7 @@ class LastResort implements ProcessorInterface
                 $fin,
                 $fout,
                 $bytesToRead,
-                $to,
-                $from
+                $state
             );
         }
 
@@ -76,8 +75,10 @@ class LastResort implements ProcessorInterface
         return ['state' => $state, 'result' => $result];
     }
 
-    private function readAndWrite($fin, $fout, $bytesToRead, $to, $from): int
+    private function readAndWrite($fin, $fout, $bytesToRead, $state): int
     {
+        list($from, $to) = $this->validateAndGetInfoFromState($state);
+
         $bytesRead = $this->php->fread($fin, $bytesToRead);
         if ($bytesRead === false) {
             throw new LastResortException("reading from", $from);
