@@ -41,14 +41,14 @@ class LastResortTest extends TestCase
         unlink($state['destination']);
     }
 
-    function testStateIsValid()
+    public function testStateIsValid()
     {
         $this->expectExceptionMessage('Incorrect state missing source, destination, or both.');
         $processor = new LastResort();
         $processor->copy([], new Result());
     }
 
-    function testOpeningSourceException()
+    public function testOpeningSourceException()
     {
         $this->expectExceptionMessage('Error opening file: hello.');
         $state = ['source' => 'hello', 'destination' => 'goodbye'];
@@ -67,7 +67,7 @@ class LastResortTest extends TestCase
         $processor->copy($state, new Result());
     }
 
-    function testOpeningDestinationException()
+    public function testOpeningDestinationException()
     {
         $this->expectExceptionMessage('Error creating file: goodbye.');
         $state = ['source' => 'hello', 'destination' => 'goodbye'];
