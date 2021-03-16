@@ -26,27 +26,27 @@ class Remote extends AbstractChunkedProcessor
 
     protected function getChunk(string $filePath, int $start, int $end)
     {
-        $ch = $this->php->curl_init();
-        $this->php->curl_setopt($ch, CURLOPT_URL, $filePath);
-        $this->php->curl_setopt($ch, CURLOPT_RANGE, "{$start}-{$end}");
-        $this->php->curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-        $this->php->curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $filePath);
+        curl_setopt($ch, CURLOPT_RANGE, "{$start}-{$end}");
+        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $result = $this->php->curl_exec($ch);
-        $this->php->curl_close($ch);
+        curl_close($ch);
         return $result;
     }
 
     protected function getHeaders($url)
     {
-        $ch = $this->php->curl_init();
-        $this->php->curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $this->php->curl_setopt($ch, CURLOPT_URL, $url);
-        $this->php->curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
-        $this->php->curl_setopt($ch, CURLOPT_HEADER, true);
-        $this->php->curl_setopt($ch, CURLOPT_NOBODY, true);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+       curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
 
         $headers = $this->parseHeaders($this->php->curl_exec($ch));
-        $this->php->curl_close($ch);
+        curl_close($ch);
         return $headers;
     }
 

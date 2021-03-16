@@ -30,6 +30,7 @@ abstract class AbstractChunkedProcessor implements ProcessorInterface
         $state['total_bytes'] = $this->getFileSize($state['source']);
 
         if (file_exists($state['destination'])) {
+            clearstatcache();
             $state['total_bytes_copied'] = filesize($state['destination']);
         }
 
