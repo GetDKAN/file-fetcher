@@ -3,6 +3,8 @@
 
 namespace FileFetcherTests\Processor;
 
+use Contracts\Mock\Storage\Memory;
+use FileFetcher\FileFetcher;
 use FileFetcher\PhpFunctionsBridge;
 use FileFetcher\Processor\LastResort;
 use MockChain\Chain;
@@ -13,6 +15,33 @@ use Procrastinator\Result;
 
 class LastResortTest extends TestCase
 {
+    public function testCopyALocalFileWithLastResortProcessor()
+    {
+
+        $fetcher = FileFetcher::get(
+            "1",
+            new Memory(),
+            [
+                "filePath" => __DIR__ . '/../files/tiny.csv',
+                "processors" => [LastResort::class]
+            ]
+        );
+
+        // Last resort does not support time limits.
+        $this->assertFalse($fetcher->setTimeLimit(1));
+
+        $fetcher->run();
+
+        $state = $fetcher->getState();
+
+        $this->assertEquals(
+            file_get_contents($state['source']),
+            file_get_contents($state['destination'])
+        );
+
+        unlink($state['destination']);
+    }
+
     function testStateIsValid()
     {
         $this->expectExceptionMessage('Incorrect state missing source, destination, or both.');

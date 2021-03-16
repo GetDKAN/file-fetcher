@@ -2,8 +2,6 @@
 
 namespace FileFetcher\Processor;
 
-use Procrastinator\Result;
-
 class Local extends AbstractChunkedProcessor
 {
 
@@ -16,11 +14,8 @@ class Local extends AbstractChunkedProcessor
     {
         $path = $state['source'];
 
-        if ($this->php->file_exists($path)) {
-            if (!$this->php->is_dir($path)) {
-                return true;
-            }
-            throw new \Exception('A real path was given but it does not point to a file.');
+        if ($this->php->file_exists($path) && !$this->php->is_dir($path)) {
+            return true;
         }
 
         return false;
@@ -30,7 +25,8 @@ class Local extends AbstractChunkedProcessor
     {
         $fp = fopen($filePath, 'r');
         fseek($fp, $start);
-        $data = fgets($fp, $end - $start);
+        $bytesToCopy = $end - $start;
+        $data = fread($fp, $bytesToCopy);
         fclose($fp);
         return $data;
     }

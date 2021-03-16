@@ -7,6 +7,14 @@ use FileFetcher\PhpFunctionsBridgeTrait;
 use FileFetcher\TemporaryFilePathFromUrl;
 use Procrastinator\Result;
 
+/**
+ * Class LastResort
+ *
+ * The "last resort" processor does a regular copy of a file if non of the safer options were possible. This
+ * processor will attempt at getting all of the data in one shot and placing it in a file.
+ *
+ * @package FileFetcher\Processor
+ */
 class LastResort implements ProcessorInterface
 {
     use TemporaryFilePathFromUrl;

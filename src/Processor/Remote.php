@@ -36,7 +36,7 @@ class Remote extends AbstractChunkedProcessor
         return $result;
     }
 
-    private function getHeaders($url)
+    protected function getHeaders($url)
     {
         $ch = $this->php->curl_init();
         $this->php->curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -50,19 +50,19 @@ class Remote extends AbstractChunkedProcessor
         return $headers;
     }
 
-    private function parseHeaders($string)
+    public static function parseHeaders($string)
     {
         $headers = [];
         $lines = explode(PHP_EOL, $string);
         foreach ($lines as $line) {
             $line = trim($line);
-            $keyvalue = $this->getKeyValueFromLine($line);
+            $keyvalue = self::getKeyValueFromLine($line);
             $headers[$keyvalue['key']] = $keyvalue['value'];
         }
         return $headers;
     }
 
-    private function getKeyValueFromLine($line): array
+    private static function getKeyValueFromLine($line): array
     {
         $key = null;
         $value = null;
