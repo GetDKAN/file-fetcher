@@ -1,18 +1,17 @@
 version: 2.0
 jobs:
   build:
+    machine:
+      image: ubuntu-2004:202010-01
     environment:
       CC_TEST_REPORTER_ID: 05b97154cabfafb769fb0afb99744dca1b5b1bdc6436657c0ac32887cfa599da
-    docker:
-      - image: circleci/php:7-cli-node-browsers-legacy
     working_directory: ~/repo
     steps:
       - checkout
       - run:
-          name: Setup dependencies
+          name: Setup DDEV
           command: |
-            sudo composer self-update
-            composer install -n --prefer-dist
+            curl -LO https://raw.githubusercontent.com/drud/ddev/master/scripts/install_ddev.sh && bash install_ddev.sh
       - run:
           name: Setup Code Climate test-reporter
           command: |
@@ -21,6 +20,10 @@ jobs:
       - run:
           name: Run tests
           command: |
+            ddev start
+            ddev xdebug
+            ddev composer install
             ./cc-test-reporter before-build
-            vendor/bin/phpunit --testsuite all --coverage-clover clover.xml
+            ddev exec ./vendor/bin/phpunit --testsuite all --coverage-clover clover.xml
+            sed -i 's+/var/www/html/+/home/circleci/repo/+g' clover.xml
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?

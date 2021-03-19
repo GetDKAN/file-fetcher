@@ -5,15 +5,15 @@ namespace FileFetcher;
 trait TemporaryFilePathFromUrl
 {
 
-  /**
-   * Get temporary file path, depending on flag keep_original_filename value.
-   *
-   * @param array $state
-   *   State.
-   *
-   * @return string
-   *   Temporary file path.
-   */
+    /**
+     * Get temporary file path, depending on flag keep_original_filename value.
+     *
+     * @param array $state
+     *   State.
+     *
+     * @return string
+     *   Temporary file path.
+     */
     private function getTemporaryFilePath(array $state): string
     {
         if ($state['keep_original_filename']) {

@@ -3,12 +3,30 @@
 namespace FileFetcher\Processor;
 
 use FileFetcher\LastResortException;
+use FileFetcher\PhpFunctionsBridgeTrait;
 use FileFetcher\TemporaryFilePathFromUrl;
 use Procrastinator\Result;
 
+/**
+ * Class LastResort
+ *
+ * The "last resort" processor does a regular copy of a file if non of the safer options were possible. This
+ * processor will attempt at getting all of the data in one shot and placing it in a file.
+ *
+ * @package FileFetcher\Processor
+ */
 class LastResort implements ProcessorInterface
 {
     use TemporaryFilePathFromUrl;
+    use PhpFunctionsBridgeTrait;
+
+    /**
+     * LastResort constructor.
+     */
+    public function __construct()
+    {
+        $this->initializePhpFunctionsBridge();
+    }
 
     public function isServerCompatible(array $state): bool
     {
@@ -31,24 +49,21 @@ class LastResort implements ProcessorInterface
 
     public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
     {
-        // 1 MB.
-        $bytesToRead = 1024 * 1000;
+        list($from, $to) = $this->validateAndGetInfoFromState($state);
+
+        $bytesToRead = 10 * 1000 * 1000;
         $bytesCopied = 0;
-        $from = $state['source'];
-        $to = $state['destination'];
+
         $fin = $this->ensureExistsForReading($from);
         $fout = $this->ensureCreatingForWriting($to);
 
         while (!feof($fin)) {
-            $bytesRead = fread($fin, $bytesToRead);
-            if ($bytesRead === false) {
-                throw new LastResortException("reading from", $from);
-            }
-            $bytesWritten = fwrite($fout, $bytesRead);
-            if ($bytesWritten === false) {
-                throw new LastResortException("writing to", $to);
-            }
-            $bytesCopied += $bytesWritten;
+            $bytesCopied += $this->readAndWrite(
+                $fin,
+                $fout,
+                $bytesToRead,
+                $state
+            );
         }
 
         $result->setStatus(Result::DONE);
@@ -58,6 +73,29 @@ class LastResort implements ProcessorInterface
         $state['total_bytes'] = $bytesCopied;
 
         return ['state' => $state, 'result' => $result];
+    }
+
+    private function readAndWrite($fin, $fout, $bytesToRead, $state): int
+    {
+        list($from, $to) = $this->validateAndGetInfoFromState($state);
+
+        $bytesRead = $this->php->fread($fin, $bytesToRead);
+        if ($bytesRead === false) {
+            throw new LastResortException("reading from", $from);
+        }
+        $bytesWritten = fwrite($fout, $bytesRead);
+        if ($bytesWritten === false) {
+            throw new LastResortException("writing to", $to);
+        }
+        return $bytesWritten;
+    }
+
+    private function validateAndGetInfoFromState($state)
+    {
+        if (!isset($state['source']) && !isset($state['destination'])) {
+            throw new \Exception("Incorrect state missing source, destination, or both.");
+        }
+        return [$state['source'], $state['destination']];
     }
 
     /**
@@ -71,7 +109,7 @@ class LastResort implements ProcessorInterface
      */
     private function ensureExistsForReading(string $from)
     {
-        $fin = fopen($from, "rb");
+        $fin = @$this->php->fopen($from, "rb");
         if ($fin === false) {
             throw new LastResortException("opening", $from);
         }
@@ -91,7 +129,7 @@ class LastResort implements ProcessorInterface
     {
         // Delete destination first to avoid appending if existing.
         $this->deleteFile($to);
-        $fout = fopen($to, "w");
+        $fout = $this->php->fopen($to, "w");
         if ($fout === false) {
             throw new LastResortException("creating", $to);
         }
