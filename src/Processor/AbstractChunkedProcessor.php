@@ -44,12 +44,14 @@ abstract class AbstractChunkedProcessor implements ProcessorInterface
 
     public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
     {
+        $fileSize = $state['total_bytes'];
+
         $destinationFile = $state['destination'];
         $total = $state['total_bytes_copied'];
 
         $expiration = time() + $timeLimit;
 
-        while ($chunk = $this->getTheChunk($state)) {
+        while (($total < $fileSize) && ($chunk = $this->getTheChunk($state))) {
             $bytesWritten = $this->createOrAppend($destinationFile, $chunk);
 
             if ($bytesWritten !== strlen($chunk)) {
