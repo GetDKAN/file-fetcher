@@ -44,21 +44,16 @@ abstract class AbstractChunkedProcessor implements ProcessorInterface
 
     public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
     {
+        $fileSize = $state['total_bytes'];
+
         $destinationFile = $state['destination'];
         $total = $state['total_bytes_copied'];
 
         $expiration = time() + $timeLimit;
 
-        while ($chunk = $this->getTheChunk($state)) {
+        while (($total < $fileSize) && ($chunk = $this->getTheChunk($state))) {
             $bytesWritten = $this->createOrAppend($destinationFile, $chunk);
-
-            if ($bytesWritten !== strlen($chunk)) {
-                throw new \RuntimeException(
-                    "Unable to fetch {$state['source']}. " .
-                    " Reason: Failed to write to destination " . $destinationFile,
-                    0
-                );
-            }
+            $this->validateWrite($bytesWritten, $chunk, $state['source'], $destinationFile);
 
             $total += $bytesWritten;
             $state['total_bytes_copied'] = $total;
@@ -72,6 +67,17 @@ abstract class AbstractChunkedProcessor implements ProcessorInterface
 
         $result->setStatus(Result::DONE);
         return ['state' => $state, 'result' => $result];
+    }
+
+    private function validateWrite(int $bytesWritten, string $chunk, string $source, string $destination)
+    {
+        if ($bytesWritten !== strlen($chunk)) {
+            throw new \RuntimeException(
+                "Unable to fetch {$source}. " .
+                " Reason: Failed to write to destination {$destination}.",
+                0
+            );
+        }
     }
 
     private function createOrAppend($filePath, $chunk)
