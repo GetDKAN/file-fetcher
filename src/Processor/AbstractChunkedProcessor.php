@@ -69,14 +69,15 @@ abstract class AbstractChunkedProcessor implements ProcessorInterface
         return ['state' => $state, 'result' => $result];
     }
 
-    private function validateWrite(int $bytesWritten, string $chunk, string $source, string $destination) {
-      if ($bytesWritten !== strlen($chunk)) {
-        throw new \RuntimeException(
-          "Unable to fetch {$source}. " .
-          " Reason: Failed to write to destination {$destination}.",
-          0
-        );
-      }
+    private function validateWrite(int $bytesWritten, string $chunk, string $source, string $destination)
+    {
+        if ($bytesWritten !== strlen($chunk)) {
+            throw new \RuntimeException(
+              "Unable to fetch {$source}. " .
+              " Reason: Failed to write to destination {$destination}.",
+              0
+            );
+        }
     }
 
     private function createOrAppend($filePath, $chunk)
