@@ -73,9 +73,9 @@ abstract class AbstractChunkedProcessor implements ProcessorInterface
     {
         if ($bytesWritten !== strlen($chunk)) {
             throw new \RuntimeException(
-              "Unable to fetch {$source}. " .
-              " Reason: Failed to write to destination {$destination}.",
-              0
+                "Unable to fetch {$source}. " .
+                " Reason: Failed to write to destination {$destination}.",
+                0
             );
         }
     }
