@@ -3,12 +3,14 @@
 namespace FileFetcher\Processor;
 
 use FileFetcher\PhpFunctionsBridgeTrait;
+use FileFetcher\TemporaryFilePathFromUrl;
 use Procrastinator\Result;
 
 class Local implements ProcessorInterface
 {
 
     use PhpFunctionsBridgeTrait;
+    use TemporaryFilePathFromUrl;
 
     /**
      * Local constructor.
@@ -32,7 +34,9 @@ class Local implements ProcessorInterface
     public function setupState(array $state): array
     {
         $state['total_bytes'] = PHP_INT_MAX;
-        $state['total_bytes'] = $this->php->filesize($state['from']);
+        $state['total_bytes'] = $this->php->filesize($state['source']);
+        $state['temporary'] = true;
+        $state['destination'] = $this->getTemporaryFilePath($state);
 
         return $state;
     }
@@ -44,9 +48,8 @@ class Local implements ProcessorInterface
 
     public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
     {
-        $this->php->copy($state['from'], $state['to']);
-        print_r($state);
-        $state['total_bytes_copied'] = $this->php->filesize($state['to']);
+        $this->php->copy($state['source'], $state['destination']);
+        $state['total_bytes_copied'] = $this->php->filesize($state['destination']);
         $result->setStatus(Result::DONE);
 
         return ['state' => $state, 'result' => $result];

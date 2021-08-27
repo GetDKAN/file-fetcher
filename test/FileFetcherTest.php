@@ -25,9 +25,6 @@ class FileFetcherTest extends TestCase
             ]
         );
 
-        // How much time do we want to spend copying the file (In seconds).
-        $fetcher->setTimeLimit(1);
-
         $fetcher->run();
 
         // [Basic Usage]
