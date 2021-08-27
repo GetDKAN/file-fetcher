@@ -25,6 +25,9 @@ class FileFetcherTest extends TestCase
             ]
         );
 
+        // Local does not support time limits.
+        $this->assertFalse($fetcher->setTimeLimit(1));
+
         $fetcher->run();
 
         // [Basic Usage]
