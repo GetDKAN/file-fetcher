@@ -2,12 +2,22 @@
 
 namespace FileFetcher\Processor;
 
-class Local extends AbstractChunkedProcessor
+use FileFetcher\PhpFunctionsBridgeTrait;
+use FileFetcher\TemporaryFilePathFromUrl;
+use Procrastinator\Result;
+
+class Local implements ProcessorInterface
 {
 
-    protected function getFileSize(string $filePath): int
+    use PhpFunctionsBridgeTrait;
+    use TemporaryFilePathFromUrl;
+
+    /**
+     * Local constructor.
+     */
+    public function __construct()
     {
-        return $this->php->filesize($filePath);
+        $this->initializePhpFunctionsBridge();
     }
 
     public function isServerCompatible(array $state): bool
@@ -21,13 +31,27 @@ class Local extends AbstractChunkedProcessor
         return false;
     }
 
-    protected function getChunk(string $filePath, int $start, int $end)
+    public function setupState(array $state): array
     {
-        $fp = fopen($filePath, 'r');
-        fseek($fp, $start);
-        $bytesToCopy = $end - $start;
-        $data = fread($fp, $bytesToCopy);
-        fclose($fp);
-        return $data;
+        $state['total_bytes'] = PHP_INT_MAX;
+        $state['total_bytes'] = $this->php->filesize($state['source']);
+        $state['temporary'] = true;
+        $state['destination'] = $this->getTemporaryFilePath($state);
+
+        return $state;
+    }
+
+    public function isTimeLimitIncompatible(): bool
+    {
+        return true;
+    }
+
+    public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
+    {
+        $this->php->copy($state['source'], $state['destination']);
+        $state['total_bytes_copied'] = $this->php->filesize($state['destination']);
+        $result->setStatus(Result::DONE);
+
+        return ['state' => $state, 'result' => $result];
     }
 }

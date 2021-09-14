@@ -25,8 +25,8 @@ class FileFetcherTest extends TestCase
             ]
         );
 
-        // How much time do we want to spend copying the file (In seconds).
-        $fetcher->setTimeLimit(1);
+        // Local does not support time limits.
+        $this->assertFalse($fetcher->setTimeLimit(1));
 
         $fetcher->run();
 
@@ -38,8 +38,6 @@ class FileFetcherTest extends TestCase
             file_get_contents($state['source']),
             file_get_contents($state['destination'])
         );
-
-        unlink($state['destination']);
     }
 
     public function testKeepOriginalFilename()
@@ -61,8 +59,6 @@ class FileFetcherTest extends TestCase
             basename($state['source']),
             basename($state['destination'])
         );
-
-        unlink($state['destination']);
     }
 
     public function testConfigValidationErrorConfigurationMissing()
