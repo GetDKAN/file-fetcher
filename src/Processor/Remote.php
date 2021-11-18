@@ -4,7 +4,7 @@ namespace FileFetcher\Processor;
 
 class Remote extends AbstractChunkedProcessor
 {
-    protected const HTTP_URL_REGEX = '^(?:(?:https?)://)?(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?(?:[^\s]*)?$';
+    protected const HTTP_URL_REGEX = '%^(?:https?://)?(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?(?:[^\s]*)?$%iu';
 
     protected function getFileSize(string $filePath): int
     {
@@ -14,7 +14,7 @@ class Remote extends AbstractChunkedProcessor
 
     public function isServerCompatible(array $state): bool
     {
-        return preg_match(self::HTTP_URL_REGEX, $state['source']) !== 1;
+        return preg_match(self::HTTP_URL_REGEX, $state['source']) === 1;
     }
 
     protected function getChunk(string $filePath, int $start, int $end)
