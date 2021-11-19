@@ -63,25 +63,22 @@ class RemoteTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testCurlHeaders()
+    /**
+     * Test the \FileFetcher\Processor\Remote::isServerCompatible() method.
+     */
+    public function testIsServerCompatible()
     {
-        $options = (new Options())
-        ->add('curl_exec', "Accept-Ranges:TRUE\nContent-Length:10")
-        ->index(0);
-
-        $bridge = (new Chain($this))
-        ->add(PhpFunctionsBridge::class, '__call', $options)
-        ->getMock();
-
         $processor = new Remote();
-        $processor->setPhpFunctionsBridge($bridge);
-        $this->assertTrue(
-            $processor->isServerCompatible([
-              'source' => 'hello',
-              'destination' => 'goodbye',
-              'total_bytes_copied' => 1,
-              'total_bytes' => 10,
-            ])
-        );
+
+        // Ensure isServerCompatible() succeeds when supplied valid sources.
+        $this->assertTrue($processor->isServerCompatible(['source' => 'example.org']));
+        $this->assertTrue($processor->isServerCompatible(['source' => 'http://example.org']));
+        $this->assertTrue($processor->isServerCompatible(['source' => 'https://example.org']));
+
+        // Ensure isServerCompatible() fails when supplied invalid sources.
+        $this->assertFalse($processor->isServerCompatible(['source' => 'invalid']));
+        $this->assertFalse($processor->isServerCompatible(['source' => 'http://invalid']));
+        $this->assertFalse($processor->isServerCompatible(['source' => 'https://invalid']));
+        $this->assertFalse($processor->isServerCompatible(['source' => 'ftp://example.org']));
     }
 }
