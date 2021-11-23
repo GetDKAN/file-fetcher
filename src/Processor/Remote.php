@@ -2,10 +2,9 @@
 
 namespace FileFetcher\Processor;
 
-use Procrastinator\Result;
-
 class Remote extends AbstractChunkedProcessor
 {
+    protected const HTTP_URL_REGEX = '%^(?:https?://)?(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?(?:[^\s]*)?$%iu';
 
     protected function getFileSize(string $filePath): int
     {
@@ -15,13 +14,7 @@ class Remote extends AbstractChunkedProcessor
 
     public function isServerCompatible(array $state): bool
     {
-        $headers = $this->getHeaders($state['source']);
-
-        if (isset($headers['Accept-Ranges']) && isset($headers['Content-Length'])) {
-            return true;
-        }
-
-        return false;
+        return preg_match(self::HTTP_URL_REGEX, $state['source']) === 1;
     }
 
     protected function getChunk(string $filePath, int $start, int $end)
@@ -29,7 +22,6 @@ class Remote extends AbstractChunkedProcessor
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $filePath);
         curl_setopt($ch, CURLOPT_RANGE, "{$start}-{$end}");
-        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $result = $this->php->curl_exec($ch);
         curl_close($ch);
