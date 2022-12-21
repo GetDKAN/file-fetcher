@@ -3,22 +3,29 @@
 namespace FileFetcherTests\Mock;
 
 use FileFetcher\Processor\Remote;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 
 class FakeRemote extends Remote
 {
-    protected function getHeaders($url)
+    protected function getClient(): Client
     {
-        $twoMegaBytes = 20 * 1000 * 1000;
-        return Remote::parseHeaders("Accept-Ranges:TRUE\nContent-Length:{$twoMegaBytes}");
+        $handlerStack = HandlerStack::create($this->getMockHandler());
+        return new Client(['handler' => $handlerStack]);
     }
 
-    protected function getChunk(string $filePath, int $start, int $end)
+    private function getMockHandler()
     {
-        $data = "";
-        $numberOfBytes = $end - $start;
-        for ($i = 1; $i < $numberOfBytes; $i++) {
-            $data .= "A";
-        }
-        return !empty(trim($data)) ? $data . PHP_EOL : false;
+        $mock = new MockHandler([
+            new Response(200, ['X-Foo' => 'Bar'], 'Hello, World'),
+        ]);
+        return $mock;
+    }
+
+    protected function getFileSize($path): int
+    {
+        return 10;
     }
 }

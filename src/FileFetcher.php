@@ -5,7 +5,6 @@ namespace FileFetcher;
 use FileFetcher\Processor\Local;
 use FileFetcher\Processor\ProcessorInterface;
 use FileFetcher\Processor\Remote;
-use FileFetcher\Processor\LastResort;
 use Procrastinator\Job\AbstractPersistentJob;
 
 /**
@@ -88,7 +87,6 @@ class FileFetcher extends AbstractPersistentJob
         $processors = [];
         $processors[Local::class] = new Local();
         $processors[Remote::class] = new Remote();
-        $processors[LastResort::class] = new LastResort();
         return $processors;
     }
 

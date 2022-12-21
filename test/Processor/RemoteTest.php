@@ -6,6 +6,7 @@ use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
 use FileFetcher\PhpFunctionsBridge;
 use FileFetcher\Processor\Remote;
+use FileFetcherTests\Mock\FakeRemote;
 use MockChain\Chain;
 use MockChain\Options;
 use PHPUnit\Framework\TestCase;
@@ -16,51 +17,19 @@ class RemoteTest extends TestCase
 
     public function testCopyAFileWithRemoteProcessor()
     {
-
-        $fetcher = FileFetcher::get(
-            "1",
-            new Memory(),
-            [
-                "filePath" => 'http://notreal.blah/notacsv.csv',
-                "processors" => [\FileFetcherTests\Mock\FakeRemote::class]
-            ]
-        );
+        $config = [
+            "filePath" => 'http://notreal.blah/notacsv.csv',
+            "processors" => [FakeRemote::class]
+        ];
+        $fetcher = FileFetcher::get("1", new Memory(), $config);
 
         $fetcher->setTimeLimit(1);
 
-        $counter = 0;
-        do {
-            $result = $fetcher->run();
-            $counter++;
-        } while ($result->getStatus() == Result::STOPPED);
-
+        $result = $fetcher->run();
         $state = $fetcher->getState();
 
-        $this->assertTrue(true);
-
-
-        unlink($state['destination']);
-    }
-
-    public function testCurlCopy()
-    {
-        $options = (new Options())
-        ->add('curl_exec', "")
-        ->index(0);
-
-        $bridge = (new Chain($this))
-        ->add(PhpFunctionsBridge::class, '__call', $options)
-        ->getMock();
-
-        $processor = new Remote();
-        $processor->setPhpFunctionsBridge($bridge);
-        $processor->copy([
-          'source' => 'hello',
-          'destination' => 'goodbye',
-          'total_bytes_copied' => 1,
-          'total_bytes' => 10,
-        ], new Result());
-        $this->assertTrue(true);
+        $this->assertEquals($state['total_bytes_copied'], 10);
+        $this->assertEquals($result->getStatus(), Result::DONE);
     }
 
     /**

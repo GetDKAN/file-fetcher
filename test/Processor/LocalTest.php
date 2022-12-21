@@ -11,12 +11,7 @@ class LocalTest extends TestCase
 {
     public function test()
     {
-        $phpFunctionBridge  = (new Chain($this))
-        ->add(PhpFunctionsBridge::class, '__call', true)
-        ->getMock();
-
         $processor = new Local();
-        $processor->setPhpFunctionsBridge($phpFunctionBridge);
         $state = ['source' => 'blah'];
         $this->assertFalse(
             $processor->isServerCompatible($state)

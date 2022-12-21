@@ -21,6 +21,7 @@
     },
     "require": {
         "getdkan/procrastinator": "^4.0.0",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "guzzlehttp/guzzle": "^6.3"
     }
 }

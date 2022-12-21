@@ -2,15 +2,16 @@
 
 namespace FileFetcher\Processor;
 
-use FileFetcher\PhpFunctionsBridgeTrait;
-use FileFetcher\TemporaryFilePathFromUrl;
 use Procrastinator\Result;
 
-abstract class AbstractChunkedProcessor implements ProcessorInterface
+/**
+ * Base class for chunk-by-chunk file fetchers.
+ *
+ * This is no longer used for included processors, but is included to
+ * maintain backwards compatibiliy with custom processors.
+ */
+abstract class AbstractChunkedProcessor extends ProcessorBase implements ProcessorInterface
 {
-    use PhpFunctionsBridgeTrait;
-    use TemporaryFilePathFromUrl;
-
     abstract public function isServerCompatible(array $state): bool;
     abstract protected function getFileSize(string $filePath): int;
     abstract protected function getChunk(string $filePath, int $start, int $end);
@@ -19,7 +20,6 @@ abstract class AbstractChunkedProcessor implements ProcessorInterface
      */
     public function __construct()
     {
-        $this->initializePhpFunctionsBridge();
     }
 
 
