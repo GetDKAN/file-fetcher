@@ -1,5 +1,0 @@
-services:
-  web:
-    environment:
-      XDEBUG_MODE: 'coverage'
-      PHP_IDE_CONFIG: 'serverName=myproject.ddev.local'
