@@ -9,7 +9,7 @@ class Remote extends AbstractChunkedProcessor
     protected function getFileSize(string $filePath): int
     {
         $headers = $this->getHeaders($filePath);
-        return $headers['Content-Length'];
+        return $headers['content-length'];
     }
 
     public function isServerCompatible(array $state): bool
