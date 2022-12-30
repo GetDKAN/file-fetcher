@@ -20,7 +20,7 @@ class Local extends ProcessorBase implements ProcessorInterface
     public function setupState(array $state): array
     {
         $state['total_bytes'] = PHP_INT_MAX;
-        $state['total_bytes'] = $this->php->filesize($state['source']);
+        $state['total_bytes'] = filesize($state['source']);
         $state['temporary'] = true;
         $state['destination'] = $this->getTemporaryFilePath($state);
 
