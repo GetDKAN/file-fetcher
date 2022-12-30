@@ -16,7 +16,9 @@ jobs:
             ./cc-test-reporter before-build
       - run:
           name: PHPUnit Tests
-          command: ./vendor/bin/phpunit --coverage-clover clover.xml
+          environment:
+            XDEBUG_MODE: coverage
+          command: phpdbg -qrr vendor/bin/phpunit --coverage-clover clover.xml
       - run:
           name: Report test coverage
           command: ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
