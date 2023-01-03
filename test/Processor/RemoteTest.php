@@ -38,8 +38,8 @@ class RemoteTest extends TestCase
 
         $this->assertTrue(true);
 
-        $abspath=$_SERVER['DOCUMENT_ROOT'];
-        unlink($abspath . $state['destination']);
+
+        unlink($state['destination']);
     }
 
     public function testCurlCopy()
