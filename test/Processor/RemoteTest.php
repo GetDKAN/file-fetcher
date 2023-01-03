@@ -38,7 +38,7 @@ class RemoteTest extends TestCase
 
         $this->assertTrue(true);
 
-        $abspath = getcwd();
+        $abspath=$_SERVER['DOCUMENT_ROOT'];
         unlink($abspath . $state['destination']);
     }
 
