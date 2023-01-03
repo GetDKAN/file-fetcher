@@ -1,29 +1,29 @@
-version: 2.0
+version: 2.1
 jobs:
-  build:
-    machine:
-      image: ubuntu-2004:current
-    environment:
-      CC_TEST_REPORTER_ID: 05b97154cabfafb769fb0afb99744dca1b5b1bdc6436657c0ac32887cfa599da
-    working_directory: ~/repo
+  test:
+    docker:
+      - image: cimg/php:8.0
     steps:
       - checkout
       - run:
-          name: Setup DDEV
-          command: |
-            curl -LO https://raw.githubusercontent.com/drud/ddev/master/scripts/install_ddev.sh && bash install_ddev.sh
+          name: composer install
+          command: composer install
       - run:
           name: Setup Code Climate test-reporter
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
             chmod +x ./cc-test-reporter
-      - run:
-          name: Run tests
-          command: |
-            ddev start
-            ddev xdebug
-            ddev composer install
             ./cc-test-reporter before-build
-            ddev exec ./vendor/bin/phpunit --testsuite all --coverage-clover clover.xml
-            sed -i 's+/var/www/html/+/home/circleci/repo/+g' clover.xml
-            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+      - run:
+          name: PHPUnit Tests
+          environment:
+            XDEBUG_MODE: coverage
+          command: phpdbg -qrr vendor/bin/phpunit --coverage-clover clover.xml
+      - run:
+          name: Report test coverage
+          command: ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+
+workflows:
+  test-workflow:
+    jobs:
+      - test

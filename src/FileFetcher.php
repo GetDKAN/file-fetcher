@@ -39,7 +39,6 @@ class FileFetcher extends AbstractPersistentJob
             'total_bytes_copied' => 0,
             'temporary' => false,
             'keep_original_filename' => $config['keep_original_filename'] ?? false,
-            'destination' => $config['filePath'],
             'temporary_directory' => $config['temporaryDirectory'],
         ];
 
