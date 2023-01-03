@@ -37,9 +37,8 @@ class RemoteTest extends TestCase
         $state = $fetcher->getState();
 
         $this->assertTrue(true);
-
-
-        unlink($state['destination']);
+        $this->assertEquals($state['processor'], 'FileFetcherTests\Mock\FakeRemote');
+        $this->assertEquals($state['destination'], 'http://notreal.blah/notacsv.csv');
     }
 
     public function testCurlCopy()
