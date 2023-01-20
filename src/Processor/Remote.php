@@ -9,7 +9,9 @@ class Remote extends AbstractChunkedProcessor
     protected function getFileSize(string $filePath): int
     {
         $headers = $this->getHeaders($filePath);
-        return $headers['content-length'];
+        // @todo Handle situation where the file size cannot be adequately
+        //   determined.
+        return $headers['content-length'] ?? 0;
     }
 
     public function isServerCompatible(array $state): bool
@@ -37,11 +39,21 @@ class Remote extends AbstractChunkedProcessor
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_NOBODY, true);
 
-        $headers = $this->parseHeaders($this->php->curl_exec($ch));
+        $headers = static::parseHeaders($this->php->curl_exec($ch));
         curl_close($ch);
         return $headers;
     }
 
+    /**
+     * Parse headers as array from header string.
+     *
+     * @param $string
+     *   The headers.
+     *
+     * @return array
+     *   The headers as an associative array. Header names are converted to
+     *   lower case.
+     */
     public static function parseHeaders($string)
     {
         $headers = [];
@@ -49,7 +61,7 @@ class Remote extends AbstractChunkedProcessor
         foreach ($lines as $line) {
             $line = trim($line);
             $keyvalue = self::getKeyValueFromLine($line);
-            $headers[$keyvalue['key']] = $keyvalue['value'];
+            $headers[strtolower($keyvalue['key'])] = $keyvalue['value'];
         }
         return $headers;
     }

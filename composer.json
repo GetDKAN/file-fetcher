@@ -15,12 +15,20 @@
     ],
     "autoload": {
         "psr-4": {
-            "FileFetcher\\": "src/",
+            "FileFetcher\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "FileFetcherTests\\": "test/"
         }
     },
     "require": {
+        "ext-curl": "*",
         "getdkan/procrastinator": "^4.0.0",
-        "ext-curl": "*"
+        "php": ">=7.4, <8.1"
+    },
+    "scripts": {
+        "phpunit": "./vendor/bin/phpunit"
     }
 }

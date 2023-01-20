@@ -16,9 +16,7 @@ class FakeRemote extends Remote
     {
         $data = "";
         $numberOfBytes = $end - $start;
-        for ($i = 1; $i < $numberOfBytes; $i++) {
-            $data .= "A";
-        }
+        $data = str_pad($data, $numberOfBytes, 'A');
         return !empty(trim($data)) ? $data . PHP_EOL : false;
     }
 }
