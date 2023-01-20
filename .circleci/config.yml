@@ -22,7 +22,7 @@ jobs:
             composer update
             ./cc-test-reporter before-build
             sudo docker-php-ext-enable xdebug
-            ./vendor/bin/phpunit --testsuite all --coverage-clover clover.xml
+            XDEBUG_MODE=coverage ./vendor/bin/phpunit --testsuite all --coverage-clover clover.xml
             EXIT_CODE=$?
             sed -i 's+/var/www/html/+/home/circleci/repo/+g' clover.xml
             ./cc-test-reporter after-build --coverage-input-type clover --exit-code $EXIT_CODE
