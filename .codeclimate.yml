@@ -1,4 +1,4 @@
-version: 2
+version: "2"
 plugins:
   phpcodesniffer:
     enabled: true
@@ -14,4 +14,3 @@ exclude_patterns:
  - ".circleci/"
  - ".gitignore"
  - "docs/"
-  

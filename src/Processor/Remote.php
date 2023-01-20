@@ -4,7 +4,9 @@ namespace FileFetcher\Processor;
 
 class Remote extends AbstractChunkedProcessor
 {
+    // phpcs:disable
     protected const HTTP_URL_REGEX = '%^(?:https?://)?(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?(?:[^\s]*)?$%iu';
+    // phpcs:enable
 
     protected function getFileSize(string $filePath): int
     {

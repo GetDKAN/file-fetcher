@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="getdkan-file-fetcher">
+    <arg name="extensions" value="inc,install,module,php,profile,test,theme,yml"/>
+    <description>PHP CodeSniffer configuration for File Fetcher</description>
+
+    <exclude-pattern>.circleci/</exclude-pattern>
+    <exclude-pattern>.ddev/</exclude-pattern>
+    <exclude-pattern>vendor/</exclude-pattern>
+
+    <file>.</file>
+
+    <rule ref="PSR1"/>
+    <rule ref="PSR2"/>
+</ruleset>

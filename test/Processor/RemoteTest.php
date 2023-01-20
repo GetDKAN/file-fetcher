@@ -18,7 +18,7 @@ class RemoteTest extends TestCase
     public function testCopyAFileWithRemoteProcessor()
     {
 
-        $this->assertNotSame(FALSE, $fetcher = FileFetcher::get(
+        $this->assertNotSame(false, $fetcher = FileFetcher::get(
             "1",
             new Memory(),
             [
@@ -81,30 +81,32 @@ class RemoteTest extends TestCase
         $this->assertFalse($processor->isServerCompatible(['source' => 'ftp://example.org']));
     }
 
-    public function provideFileSizeHeaders() {
-      return [
+    public function provideFileSizeHeaders()
+    {
+        return [
         [1, ['content-length' => 1]],
         [0, ['content-length' => 0]],
         'wrong_type' => [23, ['content-length' => '23']],
-        'wrong_type_null' => [0, ['content-length' => NULL]],
+        'wrong_type_null' => [0, ['content-length' => null]],
         'no_header' => [0, []],
-      ];
+        ];
     }
 
     /**
      * @covers \FileFetcher\Processor\Remote::getFileSize()
      * @dataProvider provideFileSizeHeaders
      */
-    public function testGetFileSize($expected, $headers) {
-      $remote = $this->getMockBuilder(Remote::class)
-        ->onlyMethods(['getFileSize', 'getHeaders'])
-        ->getMock();
-      $remote->method('getHeaders')
-        ->willReturn($headers);
-      $ref_getFileSize = (new \ReflectionClass(Remote::class))
-        ->getMethod('getFileSize');
-      $ref_getFileSize->setAccessible(TRUE);
+    public function testGetFileSize($expected, $headers)
+    {
+        $remote = $this->getMockBuilder(Remote::class)
+            ->onlyMethods(['getFileSize', 'getHeaders'])
+            ->getMock();
+        $remote->method('getHeaders')
+            ->willReturn($headers);
+        $ref_getFileSize = (new \ReflectionClass(Remote::class))
+            ->getMethod('getFileSize');
+        $ref_getFileSize->setAccessible(true);
 
-      $this->assertSame($expected, $ref_getFileSize->invokeArgs($remote, ['filepath']));
+        $this->assertSame($expected, $ref_getFileSize->invokeArgs($remote, ['filepath']));
     }
 }
