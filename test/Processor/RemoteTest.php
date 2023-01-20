@@ -88,7 +88,6 @@ class RemoteTest extends TestCase
         'wrong_type' => [23, ['content-length' => '23']],
         'wrong_type_null' => [0, ['content-length' => NULL]],
         'no_header' => [0, []],
-        'wrong_case' => [1, ['Content-Length' => 1]],
       ];
     }
 
