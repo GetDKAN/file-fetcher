@@ -7,8 +7,10 @@ use Procrastinator\Result;
 /**
  * Base class for chunk-by-chunk file fetchers.
  *
- * This is no longer used for included processors, but is included to
- * maintain backwards compatibiliy with custom processors.
+ * @deprecated This is no longer used for included processors, but is included
+ * to maintain backwards compatibiliy with custom processors.
+ *
+ * @codeCoverageIgnore
  */
 abstract class AbstractChunkedProcessor extends ProcessorBase implements ProcessorInterface
 {

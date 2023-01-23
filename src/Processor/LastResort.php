@@ -3,7 +3,10 @@
 namespace FileFetcher\Processor;
 
 /**
- * No longer needed, but class name maintained for backwards compatibility.
+ * @deprecated No longer needed, but class name maintained for backwards
+ * compatibility.
+ *
+ * @codeCoverageIgnore
  */
 class LastResort extends Local
 {
