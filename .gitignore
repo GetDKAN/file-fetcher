@@ -4,3 +4,4 @@ composer.lock
 .vscode
 .phpunit*
 coverage
+.phpunit.result.cache
