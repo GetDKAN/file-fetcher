@@ -1,4 +1,7 @@
 /vendor/
 composer.lock
 .idea
+.vscode
+.phpunit*
+coverage
 .phpunit.result.cache
