@@ -17,7 +17,7 @@ use Procrastinator\Job\AbstractPersistentJob;
 class FileFetcher extends AbstractPersistentJob
 {
 
-    private $customProcessorClasses = [];
+    private array $customProcessorClasses = [];
 
     /**
      * Constructor.
@@ -51,7 +51,7 @@ class FileFetcher extends AbstractPersistentJob
             }
         }
 
-        $this->getResult()->setData(json_encode($state));
+        $this->getResult()->setData(json_encode($state, JSON_THROW_ON_ERROR));
     }
 
     public function setTimeLimit(int $seconds): bool
@@ -65,7 +65,7 @@ class FileFetcher extends AbstractPersistentJob
     protected function runIt()
     {
         $state = $this->getProcessor()->setupState($this->getState());
-        $this->getResult()->setData(json_encode($state));
+        $this->getResult()->setData(json_encode($state, JSON_THROW_ON_ERROR));
         $info = $this->getProcessor()->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
         $this->setState($info['state']);
         return $info['result'];
