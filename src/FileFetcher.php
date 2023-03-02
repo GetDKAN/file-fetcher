@@ -51,7 +51,7 @@ class FileFetcher extends AbstractPersistentJob
             }
         }
 
-        $this->getResult()->setData(json_encode($state, JSON_THROW_ON_ERROR));
+        $this->getResult()->setData(json_encode($state));
     }
 
     public function setTimeLimit(int $seconds): bool
@@ -65,7 +65,7 @@ class FileFetcher extends AbstractPersistentJob
     protected function runIt()
     {
         $state = $this->getProcessor()->setupState($this->getState());
-        $this->getResult()->setData(json_encode($state, JSON_THROW_ON_ERROR));
+        $this->getResult()->setData(json_encode($state));
         $info = $this->getProcessor()->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
         $this->setState($info['state']);
         return $info['result'];
