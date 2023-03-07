@@ -1,5 +1,6 @@
 /vendor/
 composer.lock
+.ddev
 .idea
 .vscode
 .phpunit*
