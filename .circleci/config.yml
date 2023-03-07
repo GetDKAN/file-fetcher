@@ -158,7 +158,6 @@ jobs:
                           - equal: [ "", <<parameters.install-flags>> ]
                   steps:
                       - run-phpunit-tests:
-                            test-command: phpunit
                             report-to-codeclimate: true
                             install-flags: << parameters.install-flags >>
             - when:
@@ -169,7 +168,6 @@ jobs:
                               - equal: [ "", <<parameters.install-flags>> ]
                   steps:
                       - run-phpunit-tests:
-                            test-command: phpunit
                             install-flags: << parameters.install-flags >>
 
 workflows:

@@ -39,9 +39,9 @@
     "scripts": {
         "phpcbf": "./vendor/bin/phpcbf -p",
         "phpcs": "./vendor/bin/phpcs -ps",
-        "phpunit": "./vendor/bin/phpunit",
-        "phpunit-coverage": "./vendor/bin/phpunit --coverage-html ./coverage",
         "rector": "./vendor/bin/rector process",
-        "rector-dry-run": "./vendor/bin/rector process --dry-run"
+        "rector-dry-run": "./vendor/bin/rector process --dry-run",
+        "test": "./vendor/bin/phpunit",
+        "test-coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html ./coverage"
     }
 }
