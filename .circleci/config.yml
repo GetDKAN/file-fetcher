@@ -135,8 +135,8 @@ commands:
 
 jobs:
     matrix-conditions:
-        #environment:
-            #CC_TEST_REPORTER_ID: 28eb57ab63aa0163f21d341acfc023bb4ea9e49b8db17ba440e99c9a16007700
+        environment:
+            CC_TEST_REPORTER_ID: 05b97154cabfafb769fb0afb99744dca1b5b1bdc6436657c0ac32887cfa599da
         description: Run tests for matrix
         executor:
             name: php/default
