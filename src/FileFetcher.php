@@ -17,7 +17,7 @@ use Procrastinator\Job\AbstractPersistentJob;
 class FileFetcher extends AbstractPersistentJob
 {
 
-    private $customProcessorClasses = [];
+    private array $customProcessorClasses = [];
 
     /**
      * Constructor.

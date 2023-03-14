@@ -6,7 +6,7 @@ use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
 use FileFetcher\Processor\Remote;
 use FileFetcherTests\Mock\FakeRemote;
-use bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Procrastinator\Result;
 
@@ -70,6 +70,6 @@ class RemoteTest extends TestCase
         $remote->copy($state, $result);
 
         $this->assertSame(Result::ERROR, $result->getStatus());
-        $this->assertStringContainsString('Failed to open stream', $result->getError());
+        $this->assertStringContainsString('ailed to open stream', $result->getError());
     }
 }

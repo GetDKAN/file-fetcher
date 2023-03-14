@@ -1,29 +1,180 @@
+# PHPUnit Composer min/max test.
+# TODO: Make our own orb out of this.
+
 version: 2.1
+orbs:
+    php: circleci/php@1.1.0
+
+commands:
+    update-packages:
+        description: |
+            Update your composer packages with automated caching and best practices applied.
+        parameters:
+            app-dir:
+                default: ~/project
+                description: Path to the directory containing your composer.json file. Not needed if composer.json lives in the root.
+                type: string
+            cache-files-dir:
+                default: /home/circleci/.composer/cache/files
+                description: Absolute path to the file cache folder. This should be inline with "composer global config cache-files-dir --absolute".
+                type: string
+            cache-key:
+                default: composer.lock
+                description: If this file is updated a new cache bucket will be created. Recommended to use composer.lock. Use composer.json when composer.lock is absent.
+                type: string
+            cache-version:
+                default: v1
+                description: Change the default cache version if you need to clear the cache for any reason.
+                type: string
+            install-flags:
+                default: --no-interaction --prefer-dist
+                description: |
+                    By default, packages will be installed with "composer install --no-interaction --prefer-dist", use this to override the standard install flags.
+                type: string
+            vendor-dir:
+                default: vendor
+                description: Relative path to the vendor folder. Relative to "app-dir". This should be inline with "composer config vendor-dir".
+                type: string
+            with-cache:
+                default: true
+                description: Enable automatic caching of your dependencies for increased speed.
+                type: boolean
+        steps:
+            - when:
+                  condition: << parameters.with-cache >>
+                  steps:
+                      - restore_cache:
+                            keys:
+                                - composer-deps-<<parameters.cache-version>>-{{ checksum "<<parameters.app-dir>>/<<parameters.cache-key>>" }}
+            - run:
+                  command: |
+                      if [ ! -f "composer.json" ] && [ ! -f "composer.lock" ]; then
+                        echo
+                        echo "---"
+                        echo "Unable to find your composer.json and composer.lock files. Did you forget to set the app-dir parameter?"
+                        echo "---"
+                        echo
+                        echo "Current directory: $(pwd)"
+                        echo
+                        echo
+                        echo "List directory: "
+                        echo
+                        ls
+                        exit 1
+                      fi
+                  name: Verify composer.json and/or composer.lock exist
+                  working_directory: <<parameters.app-dir>>
+            - run:
+                  command: composer update <<parameters.install-flags>>
+                  name: Updating Composer Packages
+                  working_directory: <<parameters.app-dir>>
+            - when:
+                  condition: << parameters.with-cache >>
+                  steps:
+                      - save_cache:
+                            key: composer-deps-<<parameters.cache-version>>-{{ checksum "<<parameters.app-dir>>/<<parameters.cache-key>>" }}
+                            paths:
+                                - <<parameters.app-dir>>/<<parameters.vendor-dir>>
+                                - <<parameters.cache-files-dir>>
+    install-xdebug:
+        steps:
+            - run:
+                  name: Install XDebug
+                  command: sudo -E install-php-extensions xdebug && sudo -E docker-php-ext-enable xdebug
+
+    install-cc-test-reporter:
+        # TODO: Parameterize location.
+        steps:
+            - run:
+                  name: Install Codeclimate test reporter
+                  command: |
+                      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+                      chmod +x ./cc-test-reporter
+
+    run-phpunit-tests:
+        description: |
+            Run PHPUnit tests.
+        parameters:
+            app-dir:
+                default: ~/project
+                description: Path to the directory containing your composer.json file. Not needed if composer.json lives in the root.
+                type: string
+            install-flags:
+                default: ""
+                description: Arguments to `composer update`.
+                type: string
+            test-command:
+                default: test
+                description: The name of the script within your composer.json which will run your tests.
+                type: string
+            report-to-codeclimate:
+                type: boolean
+                default: false
+                description: Report coverage info to Codeclimate.
+        steps:
+            - checkout
+            - update-packages:
+                  app-dir: <<parameters.app-dir>>
+                  cache-key: composer.json
+                  install-flags: <<parameters.install-flags>>
+            - when:
+                  condition: <<parameters.report-to-codeclimate>>
+                  steps:
+                      - install-xdebug
+                      - install-cc-test-reporter
+                      - run: |
+                            ./cc-test-reporter before-build
+                            XDEBUG_MODE=coverage composer <<parameters.test-command>> -- --coverage-clover clover.xml
+                            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+            - when:
+                  condition:
+                      not: <<parameters.report-to-codeclimate>>
+                  steps:
+                      - run: |
+                            XDEBUG_MODE=off composer <<parameters.test-command>>
+
 jobs:
-  test:
-    docker:
-      - image: cimg/php:8.0
-    steps:
-      - checkout
-      - run:
-          name: composer install
-          command: composer install
-      - run:
-          name: Setup Code Climate test-reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
-            ./cc-test-reporter before-build
-      - run:
-          name: PHPUnit Tests
-          environment:
-            XDEBUG_MODE: coverage
-          command: phpdbg -qrr vendor/bin/phpunit --coverage-clover clover.xml
-      - run:
-          name: Report test coverage
-          command: ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+    matrix-conditions:
+        environment:
+            CC_TEST_REPORTER_ID: 05b97154cabfafb769fb0afb99744dca1b5b1bdc6436657c0ac32887cfa599da
+        description: Run tests for matrix
+        executor:
+            name: php/default
+            tag: << parameters.version >>
+        parameters:
+            version:
+                default: "7.4"
+                description: The `cimg/php` Docker image version tag.
+                type: string
+            install-flags:
+                default: ""
+                description: Arguments to `composer update`.
+                type: string
+        steps:
+            - when:
+                  condition:
+                      and:
+                          - equal: [ "8.1", <<parameters.version>> ]
+                          - equal: [ "", <<parameters.install-flags>> ]
+                  steps:
+                      - run-phpunit-tests:
+                            report-to-codeclimate: true
+                            install-flags: << parameters.install-flags >>
+            - when:
+                  condition:
+                      not:
+                          and:
+                              - equal: [ "8.1", <<parameters.version>> ]
+                              - equal: [ "", <<parameters.install-flags>> ]
+                  steps:
+                      - run-phpunit-tests:
+                            install-flags: << parameters.install-flags >>
 
 workflows:
-  test-workflow:
-    jobs:
-      - test
+    all-tests:
+        jobs:
+            - matrix-conditions:
+                  matrix:
+                      parameters:
+                          version: ["7.4", "8.0", "8.1"]
+                          install-flags: ["", "--prefer-lowest"]
