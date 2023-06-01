@@ -4,33 +4,20 @@ namespace FileFetcherTests;
 
 use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
-use FileFetcher\Processor\LastResort;
 use FileFetcher\Processor\Local;
-use FileFetcher\Processor\Remote;
 use PHPUnit\Framework\TestCase;
-use Procrastinator\Result;
 
 class FileFetcherTest extends TestCase
 {
 
     public function testCopyALocalFile()
     {
-        // [Basic Usage]
-
-        $fetcher = FileFetcher::get(
-            "1",
-            new Memory(),
-            [
-              "filePath" => __DIR__ . '/files/tiny.csv'
-            ]
-        );
+        $config = ["filePath" => __DIR__ . '/files/tiny.csv'];
+        $fetcher = FileFetcher::get("1", new Memory(), $config);
 
         // Local does not support time limits.
         $this->assertFalse($fetcher->setTimeLimit(1));
-
         $fetcher->run();
-
-        // [Basic Usage]
 
         $state = $fetcher->getState();
 

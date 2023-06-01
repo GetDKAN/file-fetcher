@@ -4,7 +4,6 @@ namespace FileFetcherTests\Processor;
 
 use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
-use FileFetcher\PhpFunctionsBridge;
 use FileFetcher\Processor\Remote;
 use FileFetcherTests\Mock\FakeRemote;
 use MockChain\Chain;
@@ -12,6 +11,9 @@ use MockChain\Options;
 use PHPUnit\Framework\TestCase;
 use Procrastinator\Result;
 
+/**
+ * @covers \FileFetcher\Processor\Remote
+ */
 class RemoteTest extends TestCase
 {
 
@@ -29,56 +31,51 @@ class RemoteTest extends TestCase
 
         $fetcher->setTimeLimit(1);
 
-        $counter = 0;
-        do {
-            $result = $fetcher->run();
-            $counter++;
-        } while ($result->getStatus() == Result::STOPPED);
-
+        $result = $fetcher->run();
         $state = $fetcher->getState();
 
         $this->assertEquals(FakeRemote::class, $state['processor']);
         $this->assertEquals('/tmp/notreal_blah_notacsv.csv', $state['destination']);
     }
 
-    public function testCurlCopy()
+    public function provideIsServerCompatible(): array
     {
-        $options = (new Options())
-        ->add('curl_exec', "")
-        ->index(0);
-
-        $bridge = (new Chain($this))
-        ->add(PhpFunctionsBridge::class, '__call', $options)
-        ->getMock();
-
-        $processor = new Remote();
-        $processor->setPhpFunctionsBridge($bridge);
-        $processor->copy([
-          'source' => 'hello',
-          'destination' => 'goodbye',
-          'total_bytes_copied' => 1,
-          'total_bytes' => 10,
-        ], new Result());
-        $this->assertTrue(true);
+        return [
+            [true, 'example.org'],
+            [true, 'http://example.org'],
+            [true, 'https://example.org'],
+            [false, 'invalid'],
+            [false, 'http://invalid'],
+            [false, 'https://invalid'],
+            [false, 'ftp://example.org'],
+        ];
     }
 
     /**
      * Test the \FileFetcher\Processor\Remote::isServerCompatible() method.
+     *
+     * @dataProvider provideIsServerCompatible
      */
-    public function testIsServerCompatible()
+    public function testIsServerCompatible($expected, $source)
     {
         $processor = new Remote();
+        $this->assertSame($expected, $processor->isServerCompatible(['source' => $source]));
+    }
 
-        // Ensure isServerCompatible() succeeds when supplied valid sources.
-        $this->assertTrue($processor->isServerCompatible(['source' => 'example.org']));
-        $this->assertTrue($processor->isServerCompatible(['source' => 'http://example.org']));
-        $this->assertTrue($processor->isServerCompatible(['source' => 'https://example.org']));
+    public function testCopyException()
+    {
+        // Ensure the status object contains the message from an exception.
+        // We'll use vfsstream to mock a file system with no permissions to
+        // throw an error.
+        $root = vfsStream::setup('root', 0000);
+        $state = ['destination' => $root->url()];
 
-        // Ensure isServerCompatible() fails when supplied invalid sources.
-        $this->assertFalse($processor->isServerCompatible(['source' => 'invalid']));
-        $this->assertFalse($processor->isServerCompatible(['source' => 'http://invalid']));
-        $this->assertFalse($processor->isServerCompatible(['source' => 'https://invalid']));
-        $this->assertFalse($processor->isServerCompatible(['source' => 'ftp://example.org']));
+        $remote = new Remote();
+        $result = new Result();
+        $remote->copy($state, $result);
+
+        $this->assertSame(Result::ERROR, $result->getStatus());
+        $this->assertStringContainsString('ailed to open stream', $result->getError());
     }
 
     public function provideFileSizeHeaders()
