@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class LocalTest extends TestCase
 {
-    public function test()
+    public function test(): void
     {
         $processor = new Local();
         $state = ['source' => 'blah'];

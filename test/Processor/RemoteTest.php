@@ -16,7 +16,7 @@ use Procrastinator\Result;
 class RemoteTest extends TestCase
 {
 
-    public function testCopyAFileWithRemoteProcessor()
+    public function testCopyAFileWithRemoteProcessor(): void
     {
         $config = [
             "filePath" => 'http://notreal.blah/notacsv.csv',
@@ -51,13 +51,13 @@ class RemoteTest extends TestCase
      *
      * @dataProvider provideIsServerCompatible
      */
-    public function testIsServerCompatible($expected, $source)
+    public function testIsServerCompatible(bool $expected, string $source): void
     {
         $processor = new Remote();
         $this->assertSame($expected, $processor->isServerCompatible(['source' => $source]));
     }
 
-    public function testCopyException()
+    public function testCopyException(): void
     {
         // Ensure the status object contains the message from an exception.
         // We'll use vfsstream to mock a file system with no permissions to

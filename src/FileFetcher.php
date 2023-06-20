@@ -82,7 +82,10 @@ class FileFetcher extends AbstractPersistentJob
         return $processors;
     }
 
-    private static function getDefaultProcessors()
+    /**
+     * @return mixed[]
+     */
+    private static function getDefaultProcessors(): array
     {
         $processors = [];
         $processors[Local::class] = new Local();
@@ -95,7 +98,7 @@ class FileFetcher extends AbstractPersistentJob
         return $this->getProcessors()[$this->getStateProperty('processor')];
     }
 
-    private function validateConfig($config): array
+    private function validateConfig(?array $config): array
     {
         if (!is_array($config)) {
             throw new \Exception("Constructor missing expected config filePath.");
@@ -109,7 +112,7 @@ class FileFetcher extends AbstractPersistentJob
         return $config;
     }
 
-    private function setProcessors($config)
+    private function setProcessors(?array $config): void
     {
         if (!isset($config['processors'])) {
             return;
