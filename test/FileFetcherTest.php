@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class FileFetcherTest extends TestCase
 {
 
-    public function testCopyALocalFile()
+    public function testCopyALocalFile(): void
     {
         $config = ["filePath" => __DIR__ . '/files/tiny.csv'];
         $fetcher = FileFetcher::get("1", new Memory(), $config);
@@ -27,7 +27,7 @@ class FileFetcherTest extends TestCase
         );
     }
 
-    public function testKeepOriginalFilename()
+    public function testKeepOriginalFilename(): void
     {
         $fetcher = FileFetcher::get(
             "2",
@@ -48,7 +48,7 @@ class FileFetcherTest extends TestCase
         );
     }
 
-    public function testConfigValidationErrorConfigurationMissing()
+    public function testConfigValidationErrorConfigurationMissing(): void
     {
         $this->expectExceptionMessage('Constructor missing expected config filePath.');
         FileFetcher::get(
@@ -57,7 +57,7 @@ class FileFetcherTest extends TestCase
         );
     }
 
-    public function testConfigValidationErrorMissingFilePath()
+    public function testConfigValidationErrorMissingFilePath(): void
     {
         $this->expectExceptionMessage('Constructor missing expected config filePath.');
         FileFetcher::get(
@@ -67,9 +67,9 @@ class FileFetcherTest extends TestCase
         );
     }
 
-    public function testCustomProcessorsValidationIsNotAnArray()
+    public function testCustomProcessorsValidationIsNotAnArray(): void
     {
-        $fetcher = FileFetcher::get(
+        FileFetcher::get(
             "2",
             new Memory(),
             [
@@ -81,9 +81,9 @@ class FileFetcherTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testCustomProcessorsValidationNotAClass()
+    public function testCustomProcessorsValidationNotAClass(): void
     {
-        $fetcher = FileFetcher::get(
+        FileFetcher::get(
             "2",
             new Memory(),
             [
@@ -95,9 +95,9 @@ class FileFetcherTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testCustomProcessorsValidationImproperClass()
+    public function testCustomProcessorsValidationImproperClass(): void
     {
-        $fetcher = FileFetcher::get(
+        FileFetcher::get(
             "2",
             new Memory(),
             [
