@@ -17,7 +17,7 @@ use Procrastinator\Job\AbstractPersistentJob;
 class FileFetcher extends AbstractPersistentJob
 {
 
-    protected array $customProcessorClasses = [];
+    private array $customProcessorClasses = [];
 
     /**
      * Constructor.
@@ -90,12 +90,12 @@ class FileFetcher extends AbstractPersistentJob
         return $processors;
     }
 
-    protected function getProcessor(): ProcessorInterface
+    private function getProcessor(): ProcessorInterface
     {
         return $this->getProcessors()[$this->getStateProperty('processor')];
     }
 
-    protected function validateConfig($config): array
+    private function validateConfig($config): array
     {
         if (!is_array($config)) {
             throw new \Exception("Constructor missing expected config filePath.");
