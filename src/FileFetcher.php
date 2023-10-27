@@ -90,7 +90,7 @@ class FileFetcher extends AbstractPersistentJob
         return $processors;
     }
 
-    private function getProcessor(): ProcessorInterface
+    protected function getProcessor(): ProcessorInterface
     {
         return $this->getProcessors()[$this->getStateProperty('processor')];
     }
