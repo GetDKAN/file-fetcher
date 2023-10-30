@@ -17,7 +17,7 @@ use Procrastinator\Job\AbstractPersistentJob;
 class FileFetcher extends AbstractPersistentJob
 {
 
-    private array $customProcessorClasses = [];
+    protected array $customProcessorClasses = [];
 
     /**
      * Constructor.
@@ -71,7 +71,7 @@ class FileFetcher extends AbstractPersistentJob
         return $info['result'];
     }
 
-    private function getProcessors()
+    protected function getProcessors(): array
     {
         $processors = self::getDefaultProcessors();
         foreach ($this->customProcessorClasses as $processorClass) {
@@ -90,7 +90,7 @@ class FileFetcher extends AbstractPersistentJob
         return $processors;
     }
 
-    private function getProcessor(): ProcessorInterface
+    protected function getProcessor(): ProcessorInterface
     {
         return $this->getProcessors()[$this->getStateProperty('processor')];
     }
@@ -109,7 +109,7 @@ class FileFetcher extends AbstractPersistentJob
         return $config;
     }
 
-    private function setProcessors($config)
+    protected function setProcessors($config)
     {
         if (!isset($config['processors'])) {
             return;
