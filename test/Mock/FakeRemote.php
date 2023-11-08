@@ -18,14 +18,9 @@ class FakeRemote extends Remote
 
     private function getMockHandler()
     {
-        $mock = new MockHandler([
-            new Response(200, ['X-Foo' => 'Bar'], 'Hello, World'),
-        ]);
-        return $mock;
-    }
-
-    protected function getFileSize($path): int
-    {
-        return 10;
+        $data = "";
+        $numberOfBytes = $end - $start;
+        $data = str_pad($data, $numberOfBytes, 'A');
+        return !empty(trim($data)) ? $data . PHP_EOL : false;
     }
 }
