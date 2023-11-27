@@ -22,9 +22,20 @@ use Procrastinator\Result;
 interface ProcessorInterface
 {
     /**
-     * Whether the server holding the "file" will work with this processor.
+     * Whether the state for this file transfer will work with this processor.
+     *
+     * For instance, a Local processor will check if the source file exists. A
+     * Remote processor will check if the source URL is valid.
+     *
+     * This method is called to determine which configured processor to use to
+     * perform the fetch.
+     *
+     * @param array $state
+     *   The file fetcher object's state array.
      *
      * @return bool
+     *   True if the processor can be used with the state/configuration. False
+     *   otherwise.
      */
     public function isServerCompatible(array $state): bool;
 
