@@ -17,10 +17,31 @@ use Procrastinator\Job\AbstractPersistentJob;
 class FileFetcher extends AbstractPersistentJob
 {
 
+    /**
+     * Array of processor class names provided by the configuration.
+     *
+     * @var string[]
+     */
     protected array $customProcessorClasses = [];
 
     /**
+     * The processor this file fetcher will use.
+     *
+     * Stored here so that we don't have to recompute it.
+     *
+     * @var \FileFetcher\Processor\ProcessorInterface
+     */
+    private ?ProcessorInterface $processor = null;
+
+    /**
      * Constructor.
+     *
+     * @param string $identifier
+     *   File fetcher job identifier.
+     * @param $storage
+     *   File fetcher job storage object.
+     * @param array|NULL $config
+     *   Configuration for the file fetcher.
      */
     protected function __construct(string $identifier, $storage, array $config = null)
     {
@@ -42,15 +63,6 @@ class FileFetcher extends AbstractPersistentJob
             'temporary_directory' => $config['temporaryDirectory'],
         ];
 
-        // [State]
-
-        foreach ($this->getProcessors() as $processor) {
-            if ($processor->isServerCompatible($state)) {
-                $state['processor'] = get_class($processor);
-                break;
-            }
-        }
-
         $this->getResult()->setData(json_encode($state));
     }
 
@@ -62,6 +74,9 @@ class FileFetcher extends AbstractPersistentJob
         return parent::setTimeLimit($seconds);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function runIt()
     {
         $state = $this->getProcessor()->setupState($this->getState());
@@ -90,9 +105,25 @@ class FileFetcher extends AbstractPersistentJob
         return $processors;
     }
 
+    /**
+     * Get the processor used by this file fetcher object.
+     *
+     * @return \FileFetcher\Processor\ProcessorInterface
+     *   A processor object, determined by configuration.
+     */
     protected function getProcessor(): ProcessorInterface
     {
-        return $this->getProcessors()[$this->getStateProperty('processor')];
+        if ($this->processor) {
+            return $this->processor;
+        }
+        $state = $this->getState();
+        foreach ($this->getProcessors() as $processor) {
+            if ($processor->isServerCompatible($state)) {
+                $this->processor = $processor;
+                break;
+            }
+        }
+        return $this->processor;
     }
 
     private function validateConfig($config): array
@@ -109,30 +140,57 @@ class FileFetcher extends AbstractPersistentJob
         return $config;
     }
 
+    /**
+     * Set custom processors for this file fetcher object.
+     *
+     * @param $config
+     *   Configuration array, as passed to __construct() or Job::get(). Should
+     *   contain an array of processor class names under the key 'processors'.
+     */
     protected function setProcessors($config)
     {
-        if (!isset($config['processors'])) {
-            return;
+        $this->processor = null;
+        $processors = $config['processors'] ?? [];
+        if (!is_array($processors)) {
+            $processors = [];
         }
-
-        if (!is_array($config['processors'])) {
-            return;
-        }
-
-        $this->customProcessorClasses = $config['processors'];
+        $this->customProcessorClasses = $processors;
     }
 
-    private function getCustomProcessorInstance($processorClass)
+    /**
+     * Get an instance of the given custom processor class.
+     *
+     * @param $processorClass
+     *   Processor class name.
+     *
+     * @return \FileFetcher\Processor\ProcessorInterface|null
+     *   An instance of the processor class. If the given class name does not
+     *   exist, or does not implement ProcessorInterface, then null is
+     *   returned.
+     */
+    private function getCustomProcessorInstance($processorClass): ?ProcessorInterface
     {
         if (!class_exists($processorClass)) {
-            return;
+            return null;
         }
 
         $classes = class_implements($processorClass);
         if (!in_array(ProcessorInterface::class, $classes)) {
-            return;
+            return null;
         }
 
         return new $processorClass();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function serializeIgnoreProperties(): array
+    {
+        // Tell our serializer to ignore processor information.
+        return array_merge(
+            parent::serializeIgnoreProperties(),
+            ['processor', 'customProcessorClasses']
+        );
     }
 }

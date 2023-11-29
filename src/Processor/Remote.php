@@ -13,7 +13,8 @@ class Remote extends ProcessorBase implements ProcessorInterface
 
     public function isServerCompatible(array $state): bool
     {
-        return preg_match(self::HTTP_URL_REGEX, $state['source']) === 1;
+        $source = $state['source'] ?? '';
+        return preg_match(self::HTTP_URL_REGEX, $source) === 1;
     }
 
     public function setupState(array $state): array
