@@ -35,6 +35,9 @@ class FileFetcher extends AbstractPersistentJob
 
     /**
      * {@inheritDoc}
+     *
+     * We override ::get() because it can set values for both newly constructed
+     * objects and re-hydrated ones.
      */
     public static function get(string $identifier, $storage, array $config = null)
     {
@@ -44,23 +47,8 @@ class FileFetcher extends AbstractPersistentJob
         // $customProcessorClasses are the same, but the caller could also be
         // telling us to use a different processor than any that were hydrated
         // from storage. We keep the existing ones and prepend the new ones.
-        if ($config_processors = $config['processors'] ?? false && is_array($config_processors)) {
-            // Do we have customProcessorClasses?
-            if ($ff->customProcessorClasses ?? false) {
-                // Prioritize the $config values by first removing them from
-                // customProcessorClasses.
-                foreach ($config_processors as $processor) {
-                    if ($key = array_search($processor, $ff->customProcessorClasses) !== false) {
-                        unset($ff->customProcessorClasses[$key]);
-                    }
-                }
-            }
-            $config['processors'] = array_merge(
-                $config_processors,
-                $ff->customProcessorClasses
-            );
-            $ff->setProcessors($config);
-        }
+        $ff->addProcessors($config);
+        $storage->store(json_encode($ff), $identifier);
         return $ff;
     }
 
@@ -183,6 +171,8 @@ class FileFetcher extends AbstractPersistentJob
      * @param $config
      *   Configuration array, as passed to __construct() or Job::get(). Should
      *   contain an array of processor class names under the key 'processors'.
+     *
+     * @see self::addProcessors()
      */
     protected function setProcessors($config)
     {
@@ -192,6 +182,41 @@ class FileFetcher extends AbstractPersistentJob
             $processors = [];
         }
         $this->customProcessorClasses = $processors;
+    }
+
+    /**
+     * Add configured processors to the ones already set in the object.
+     *
+     * Existing custom processor classes will be preserved, but any present in
+     * the new config will be prioritized.
+     *
+     * @param array $config
+     *   Configuration array, as passed to __construct() or Job::get(). Should
+     *   contain an array of processor class names under the key 'processors'.
+     *
+     * @see self::setProcessors()
+     */
+    protected function addProcessors(array $config): void
+    {
+        // If we have config, and we don't have custom classes already, do the
+        // easy thing.
+        if (($config['processors'] ?? false) && empty($this->customProcessorClasses)) {
+            $this->setProcessors($config);
+            return;
+        }
+        if ($config_processors = $config['processors'] ?? false) {
+            $this->processor = null;
+            foreach ($config_processors as $config_processor) {
+                // Use array_keys() with its search parameter.
+                foreach (array_keys($this->customProcessorClasses, $config_processor) as $existing) {
+                    unset($this->customProcessorClasses[$existing]);
+                }
+            }
+            $this->customProcessorClasses = array_merge(
+                $config_processors,
+                $this->customProcessorClasses
+            );
+        }
     }
 
     /**
