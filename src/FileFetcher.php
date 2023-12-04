@@ -34,7 +34,41 @@ class FileFetcher extends AbstractPersistentJob
     private ?ProcessorInterface $processor = null;
 
     /**
+     * {@inheritDoc}
+     */
+    public static function get(string $identifier, $storage, array $config = null)
+    {
+        $ff = parent::get($identifier, $storage, $config);
+        // If we see that a processor is configured, we need to handle some
+        // special cases. It might be that the hydrated values for
+        // $customProcessorClasses are the same, but the caller could also be
+        // telling us to use a different processor than any that were hydrated
+        // from storage. We keep the existing ones and prepend the new ones.
+        if ($config_processors = $config['processors'] ?? false && is_array($config_processors)) {
+            // Do we have customProcessorClasses?
+            if ($ff->customProcessorClasses ?? false) {
+                // Prioritize the $config values by first removing them from
+                // customProcessorClasses.
+                foreach ($config_processors as $processor) {
+                    if ($key = array_search($processor, $ff->customProcessorClasses) !== false) {
+                        unset($ff->customProcessorClasses[$key]);
+                    }
+                }
+            }
+            $config['processors'] = array_merge(
+                $config_processors,
+                $ff->customProcessorClasses
+            );
+            $ff->setProcessors($config);
+        }
+        return $ff;
+    }
+
+    /**
      * Constructor.
+     *
+     * Constructor is protected. Use static::get() to instantiate a file
+     * fetcher.
      *
      * @param string $identifier
      *   File fetcher job identifier.
@@ -42,6 +76,8 @@ class FileFetcher extends AbstractPersistentJob
      *   File fetcher job storage object.
      * @param array|NULL $config
      *   Configuration for the file fetcher.
+     *
+     * @see static::get()
      */
     protected function __construct(string $identifier, $storage, array $config = null)
     {
@@ -108,10 +144,11 @@ class FileFetcher extends AbstractPersistentJob
     /**
      * Get the processor used by this file fetcher object.
      *
-     * @return \FileFetcher\Processor\ProcessorInterface
-     *   A processor object, determined by configuration.
+     * @return \FileFetcher\Processor\ProcessorInterface|null
+     *   A processor object, determined by configuration, or NULL if none is
+     *   suitable.
      */
-    protected function getProcessor(): ProcessorInterface
+    protected function getProcessor(): ?ProcessorInterface
     {
         if ($this->processor) {
             return $this->processor;
@@ -190,7 +227,7 @@ class FileFetcher extends AbstractPersistentJob
         // Tell our serializer to ignore processor information.
         return array_merge(
             parent::serializeIgnoreProperties(),
-            ['processor', 'customProcessorClasses']
+            ['processor']
         );
     }
 }

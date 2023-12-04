@@ -6,6 +6,8 @@ use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
 use FileFetcher\Processor\Local;
 use FileFetcherTests\Mock\FakeLocal;
+use FileFetcherTests\Mock\FakeProcessor;
+use FileFetcherTests\Mock\FakeRemote;
 use PHPUnit\Framework\TestCase;
 
 class FileFetcherTest extends TestCase
@@ -110,8 +112,7 @@ class FileFetcherTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testSwitchProcessor()
-    {
+    public function testSwitchProcessor() {
         $file_path = __DIR__ . '/files/tiny.csv';
         $temporary_directory = '/temp/foo';
         // Storage.
@@ -120,7 +121,8 @@ class FileFetcherTest extends TestCase
         $this->assertCount(0, $storage->retrieveAll());
 
         // Create a file fetcher. Its state will be stored in the memory
-        // storage. Specify a non-standard temp dir so that we can test it.
+        // storage. Specify a non-standard temp dir so that we can test that
+        // it was stored.
         $config = [
             'filePath' => $file_path,
             'temporaryDirectory' => $temporary_directory
@@ -141,14 +143,14 @@ class FileFetcherTest extends TestCase
             FileFetcher::class,
             'getProcessor'
         );
-        $ref_get_processor->setAccessible(true);
+        $ref_get_processor->setAccessible(TRUE);
         $this->assertInstanceOf(
             Local::class,
             $ref_get_processor->invoke($fetcher)
         );
 
         // Retrieve the fetcher again, with config for a different processor.
-        $fetcher = null;
+        $fetcher = NULL;
         $config = [
             'filePath' => $file_path,
             'processors' => [FakeLocal::class]
@@ -159,10 +161,33 @@ class FileFetcherTest extends TestCase
         // it was retrieved from storage.
         $this->assertEquals($temporary_directory, $fetcher->getState()['temporary_directory']);
 
-        // Processor should be the one we specified in ::get().
+        // Processor should be the one we specified in configuration.
         $this->assertInstanceOf(
             FakeLocal::class,
             $ref_get_processor->invoke($fetcher)
         );
+
+        // Retrieve the fetcher again, this time with a different custom
+        // processor.
+        $fetcher = null;
+        $fetcher = FileFetcher::get('1', $storage, [
+            'filePath' => $file_path,
+            'processors' => [FakeProcessor::class]
+        ]);
+        // Assert our non-standard temp directory.
+        $this->assertEquals($temporary_directory, $fetcher->getState()['temporary_directory']);
+        // Processor should be the one we specified in configuration.
+        $this->assertInstanceOf(
+            FakeProcessor::class,
+            $ref_get_processor->invoke($fetcher)
+        );
+        // The list of custom processors should include both custom processors
+        // we specified.
+        $ref_custom_processors = new \ReflectionProperty($fetcher, 'customProcessorClasses');
+        $ref_custom_processors->setAccessible(true);
+        $custom_processors = $ref_custom_processors->getValue($fetcher);
+        $this->assertContains(FakeProcessor::class, $custom_processors);
+        $this->assertContains(FakeLocal::class, $custom_processors);
     }
+
 }
