@@ -27,5 +27,4 @@ class FakeProcessor implements ProcessorInterface
     {
         return false;
     }
-
 }

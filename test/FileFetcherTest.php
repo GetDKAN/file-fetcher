@@ -251,5 +251,4 @@ class FileFetcherTest extends TestCase
             FakeRemote::class,
         ], $ref_custom_processors->getValue($fetcher));
     }
-
 }
