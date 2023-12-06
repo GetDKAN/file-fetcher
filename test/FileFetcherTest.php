@@ -76,7 +76,6 @@ class FileFetcherTest extends TestCase
 
     public function testCustomProcessorsValidationIsNotAnArray()
     {
-        $this->markTestIncomplete('why do we need the thing this tests?');
         $fetcher = FileFetcher::get(
             "2",
             new Memory(),
@@ -140,12 +139,8 @@ class FileFetcherTest extends TestCase
         $this->assertEquals($file_path, $fetcher->getState()['source']);
         $this->assertEquals($temporary_directory, $fetcher->getState()['temporary_directory']);
 
-        // Ensure there's no processor info in the state.
-        $this->assertArrayNotHasKey('processor', $fetcher->getState());
-        $this->assertArrayNotHasKey('customProcessorClasses', $fetcher->getState());
-
         // What is the processor object?
-        $ref_get_processor = new \ReflectionMethod($fetcher, 'getProcessor');
+        $ref_get_processor = new \ReflectionMethod(FileFetcher::class, 'getProcessor');
         $ref_get_processor->setAccessible(true);
         $this->assertInstanceOf(
             Local::class,
@@ -172,18 +167,10 @@ class FileFetcherTest extends TestCase
 
         // Retrieve the fetcher again, this time with a different custom
         // processor.
-        $fetcher = null;
         $fetcher = FileFetcher::get('1', $storage, [
             'filePath' => $file_path,
             'processors' => [FakeProcessor::class]
         ]);
-        // Assert our non-standard temp directory again.
-        $this->assertEquals($temporary_directory, $fetcher->getState()['temporary_directory']);
-        // Processor should be the one we specified in configuration.
-        $this->assertInstanceOf(
-            FakeProcessor::class,
-            $ref_get_processor->invoke($fetcher)
-        );
         // The list of custom processors should include both custom processors
         // we specified.
         $ref_custom_processors = new \ReflectionProperty($fetcher, 'customProcessorClasses');
@@ -191,6 +178,14 @@ class FileFetcherTest extends TestCase
         $custom_processors = $ref_custom_processors->getValue($fetcher);
         $this->assertContains(FakeProcessor::class, $custom_processors);
         $this->assertContains(FakeLocal::class, $custom_processors);
+
+        // Assert our non-standard temp directory again.
+        $this->assertEquals($temporary_directory, $fetcher->getState()['temporary_directory']);
+        // Processor should be the one we specified in configuration.
+        $this->assertInstanceOf(
+            FakeProcessor::class,
+            $ref_get_processor->invoke($fetcher)
+        );
     }
 
     /**

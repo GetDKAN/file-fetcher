@@ -110,10 +110,19 @@ class FileFetcher extends AbstractPersistentJob
         return $info['result'];
     }
 
+    /**
+     * Gets the combined default and custom processors list.
+     *
+     * @return array
+     *   The combined default and custom processors list, prioritizing the
+     *   custom ones in the order they were defined.
+     */
     protected function getProcessors(): array
     {
         $processors = self::getDefaultProcessors();
-        foreach ($this->customProcessorClasses as $processorClass) {
+        // Reverse the array so when we merge it all back together it's in the
+        // correct order of precedent.
+        foreach (array_reverse($this->customProcessorClasses) as $processorClass) {
             if ($processor = $this->getCustomProcessorInstance($processorClass)) {
                 $processors = array_merge([get_class($processor) => $processor], $processors);
             }
@@ -123,10 +132,10 @@ class FileFetcher extends AbstractPersistentJob
 
     private static function getDefaultProcessors()
     {
-        $processors = [];
-        $processors[Local::class] = new Local();
-        $processors[Remote::class] = new Remote();
-        return $processors;
+        return [
+            Local::class => new Local(),
+            Remote::class => new Remote(),
+        ];
     }
 
     /**
@@ -206,12 +215,14 @@ class FileFetcher extends AbstractPersistentJob
         }
         if ($config_processors = $config['processors'] ?? false) {
             $this->processor = null;
+            // Unset the configured processors from custmProcessorClasses.
             foreach ($config_processors as $config_processor) {
                 // Use array_keys() with its search parameter.
                 foreach (array_keys($this->customProcessorClasses, $config_processor) as $existing) {
                     unset($this->customProcessorClasses[$existing]);
                 }
             }
+            // Merge in the configuration.
             $this->customProcessorClasses = array_merge(
                 $config_processors,
                 $this->customProcessorClasses
