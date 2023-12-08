@@ -216,17 +216,29 @@ class FileFetcher extends AbstractPersistentJob
         if ($config_processors = $config['processors'] ?? false) {
             $this->processor = null;
             // Unset the configured processors from customProcessorClasses.
-            foreach ($config_processors as $config_processor) {
-                // Use array_keys() with its search parameter.
-                foreach (array_keys($this->customProcessorClasses, $config_processor) as $existing) {
-                    unset($this->customProcessorClasses[$existing]);
-                }
-            }
+            $this->unsetDuplicateCustomProcessorClasses($config_processors);
             // Merge in the configuration.
             $this->customProcessorClasses = array_merge(
                 $config_processors,
                 $this->customProcessorClasses
             );
+        }
+    }
+
+    /**
+     * Unset items in $this->customProcessorClasses present in the given array.
+     *
+     * @param array $processors
+     *   Processor class names to be removed from the list of custom processor
+     *   classes.
+     */
+    private function unsetDuplicateCustomProcessorClasses(array $processors):void
+    {
+        foreach ($processors as $processor) {
+            // Use array_keys() with its search parameter.
+            foreach (array_keys($this->customProcessorClasses, $processor) as $existing) {
+                unset($this->customProcessorClasses[$existing]);
+            }
         }
     }
 
