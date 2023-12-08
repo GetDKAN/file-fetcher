@@ -29,7 +29,7 @@ class FileFetcher extends AbstractPersistentJob
      *
      * Stored here so that we don't have to recompute it.
      *
-     * @var \FileFetcher\Processor\ProcessorInterface
+     * @var \FileFetcher\Processor\ProcessorInterface|null
      */
     private ?ProcessorInterface $processor = null;
 
@@ -69,7 +69,7 @@ class FileFetcher extends AbstractPersistentJob
      */
     protected function __construct(string $identifier, $storage, array $config = null)
     {
-        parent::__construct($identifier, $storage, $config);
+        parent::__construct($identifier, $storage);
 
         $this->setProcessors($config);
 
@@ -111,10 +111,10 @@ class FileFetcher extends AbstractPersistentJob
     }
 
     /**
-     * Gets the combined default and custom processors list.
+     * Gets the combined custom and default processors list.
      *
      * @return array
-     *   The combined default and custom processors list, prioritizing the
+     *   The combined custom and default processors list, prioritizing the
      *   custom ones in the order they were defined.
      */
     protected function getProcessors(): array
@@ -215,7 +215,7 @@ class FileFetcher extends AbstractPersistentJob
         }
         if ($config_processors = $config['processors'] ?? false) {
             $this->processor = null;
-            // Unset the configured processors from custmProcessorClasses.
+            // Unset the configured processors from customProcessorClasses.
             foreach ($config_processors as $config_processor) {
                 // Use array_keys() with its search parameter.
                 foreach (array_keys($this->customProcessorClasses, $config_processor) as $existing) {
