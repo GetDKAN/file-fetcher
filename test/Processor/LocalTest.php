@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 class LocalTest extends TestCase
 {
 
-    public function provideSource()
+    public function provideSource(): array
     {
         return [
             'any-normal-file' => ['blah'],
@@ -24,7 +24,7 @@ class LocalTest extends TestCase
      * @covers ::isServerCompatible
      * @dataProvider provideSource
      */
-    public function test($source)
+    public function test(string $source): void
     {
         $processor = new Local();
         $state = ['source' => $source];

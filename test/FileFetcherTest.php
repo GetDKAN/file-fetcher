@@ -116,7 +116,7 @@ class FileFetcherTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testSwitchProcessor()
+    public function testSwitchProcessor(): void
     {
         $file_path = __DIR__ . '/files/tiny.csv';
         $temporary_directory = '/temp/foo';
@@ -191,7 +191,7 @@ class FileFetcherTest extends TestCase
     /**
      * @covers ::addProcessors
      */
-    public function testAddProcessors()
+    public function testAddProcessors(): void
     {
         $file_path = __DIR__ . '/files/tiny.csv';
         $temporary_directory = '/temp/foo';

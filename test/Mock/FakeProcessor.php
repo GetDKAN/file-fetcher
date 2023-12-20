@@ -18,6 +18,9 @@ class FakeProcessor implements ProcessorInterface
         return $state;
     }
 
+    /**
+     * @return array{state: mixed[], result: Result}
+     */
     public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
     {
         return ['state' => $state, 'result' => $result];
