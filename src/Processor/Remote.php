@@ -40,7 +40,7 @@ class Remote extends ProcessorBase implements ProcessorInterface
             // If the HTTP client throws an exception, then we can't/shouldn't
             // transfer the file. See the subclass hierarchy of
             // GuzzleException for all the cases this handles.
-            $client->head($state['source']);
+//            $client->head($state['source']);
             $fout = fopen($state['destination'], "w");
             $client->get($state['source'], ['sink' => $fout]);
             $result->setStatus(Result::DONE);

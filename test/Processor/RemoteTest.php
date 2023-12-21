@@ -6,14 +6,13 @@ use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
 use FileFetcher\Processor\Remote;
 use FileFetcherTests\Mock\FakeRemote;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Procrastinator\Result;
 
 /**
  * @covers \FileFetcher\Processor\Remote
+ * @coversDefaultClass \FileFetcher\Processor\Remote
  */
 class RemoteTest extends TestCase
 {
@@ -75,6 +74,9 @@ class RemoteTest extends TestCase
         $this->assertStringContainsString('ailed to open stream', $result->getError());
     }
 
+    /**
+     * Ensure that 404 responses do not write content to disk.
+     */
     public function test404DoesNotCreateFile()
     {
         $root = vfsStream::setup('test404');
