@@ -32,8 +32,15 @@ class Remote extends ProcessorBase implements ProcessorInterface
 
     public function copy(array $state, Result $result, int $timeLimit = PHP_INT_MAX): array
     {
+        $state['source'] = $state['source'] ?? '';
         $client = $this->getClient();
         try {
+            // Use a HEAD request to discover whether the source URL is valid.
+            // If the HTTP client throws an exception, then we can't/shouldn't
+            // allow the contents to be written to destination. See the
+            // subclass hierarchy of GuzzleException for all the cases this
+            // handles.
+            $client->head($state['source']);
             $fout = fopen($state['destination'], "w");
             $client->get($state['source'], ['sink' => $fout]);
             $result->setStatus(Result::DONE);
@@ -49,7 +56,10 @@ class Remote extends ProcessorBase implements ProcessorInterface
     protected function getFileSize($path): int
     {
         clearstatcache();
-        return filesize($path);
+        if ($size = @filesize($path) !== false) {
+            return $size;
+        }
+        return 0;
     }
 
     protected function getClient(): Client

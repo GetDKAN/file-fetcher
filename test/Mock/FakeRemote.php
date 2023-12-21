@@ -19,6 +19,9 @@ class FakeRemote extends Remote
     private function getMockHandler()
     {
         $mock = new MockHandler([
+            // Multiple copies because Remote can end up making more than one
+            // request.
+            new Response(200, ['X-Foo' => 'Bar'], 'Hello, World'),
             new Response(200, ['X-Foo' => 'Bar'], 'Hello, World'),
         ]);
         return $mock;

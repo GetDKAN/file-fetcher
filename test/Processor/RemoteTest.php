@@ -12,6 +12,7 @@ use Procrastinator\Result;
 
 /**
  * @covers \FileFetcher\Processor\Remote
+ * @coversDefaultClass \FileFetcher\Processor\Remote
  */
 class RemoteTest extends TestCase
 {
@@ -19,10 +20,10 @@ class RemoteTest extends TestCase
     public function testCopyAFileWithRemoteProcessor()
     {
         $config = [
-            "filePath" => 'http://notreal.blah/notacsv.csv',
-            "processors" => [FakeRemote::class]
+            'filePath' => 'http://notreal.blah/notacsv.csv',
+            'processors' => [FakeRemote::class]
         ];
-        $fetcher = FileFetcher::get("1", new Memory(), $config);
+        $fetcher = FileFetcher::get('1', new Memory(), $config);
 
         $fetcher->setTimeLimit(1);
 
@@ -49,6 +50,8 @@ class RemoteTest extends TestCase
     /**
      * Test the \FileFetcher\Processor\Remote::isServerCompatible() method.
      *
+     * @covers ::isServerCompatible
+     *
      * @dataProvider provideIsServerCompatible
      */
     public function testIsServerCompatible($expected, $source)
@@ -57,19 +60,43 @@ class RemoteTest extends TestCase
         $this->assertSame($expected, $processor->isServerCompatible(['source' => $source]));
     }
 
+    /**
+     * Ensure the status object contains the message from an exception.
+     */
     public function testCopyException()
     {
-        // Ensure the status object contains the message from an exception.
-        // We'll use vfsstream to mock a file system with no permissions to
-        // throw an error.
-        $root = vfsStream::setup('root', 0000);
-        $state = ['destination' => $root->url()];
+        $root = vfsStream::setup('no-write', 0000);
+
+        $remote = new Remote();
+        $result = new Result();
+
+        // State does not have a source property, so there should be a curl error.
+        $remote->copy(['destination' => $root->url() . 'file.txt'], $result);
+
+        $this->assertSame(Result::ERROR, $result->getStatus());
+        $this->assertStringContainsString('cURL error 3', $result->getError());
+    }
+
+    /**
+     * Ensure that 404 responses do not write content to disk.
+     */
+    public function test404DoesNotCreateFile()
+    {
+        $root = vfsStream::setup('test404');
+        $root_url = $root->url() . '/bad_file.csv';
+        $state = [
+            'source' => 'http://example.com/bad_file.csv',
+            'destination' => $root_url,
+        ];
 
         $remote = new Remote();
         $result = new Result();
         $remote->copy($state, $result);
 
+        // Assert that there was a 404 error.
         $this->assertSame(Result::ERROR, $result->getStatus());
-        $this->assertStringContainsString('ailed to open stream', $result->getError());
+        $this->assertStringContainsString('resulted in a `404 Not Found` response', $result->getError());
+        // Assert that the file was not created.
+        $this->assertFileDoesNotExist($root_url);
     }
 }
