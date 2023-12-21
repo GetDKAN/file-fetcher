@@ -3,7 +3,6 @@
 namespace FileFetcher\Processor;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use Procrastinator\Result;
 
 class Remote extends ProcessorBase implements ProcessorInterface
@@ -38,9 +37,10 @@ class Remote extends ProcessorBase implements ProcessorInterface
         try {
             // Use a HEAD request to discover whether the source URL is valid.
             // If the HTTP client throws an exception, then we can't/shouldn't
-            // transfer the file. See the subclass hierarchy of
-            // GuzzleException for all the cases this handles.
-//            $client->head($state['source']);
+            // allow the contents to be written to destination. See the
+            // subclass hierarchy of GuzzleException for all the cases this
+            // handles.
+            $client->head($state['source']);
             $fout = fopen($state['destination'], "w");
             $client->get($state['source'], ['sink' => $fout]);
             $result->setStatus(Result::DONE);

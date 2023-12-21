@@ -50,6 +50,8 @@ class RemoteTest extends TestCase
     /**
      * Test the \FileFetcher\Processor\Remote::isServerCompatible() method.
      *
+     * @covers ::isServerCompatible
+     *
      * @dataProvider provideIsServerCompatible
      */
     public function testIsServerCompatible($expected, $source)
@@ -58,20 +60,21 @@ class RemoteTest extends TestCase
         $this->assertSame($expected, $processor->isServerCompatible(['source' => $source]));
     }
 
+    /**
+     * Ensure the status object contains the message from an exception.
+     */
     public function testCopyException()
     {
-        // Ensure the status object contains the message from an exception.
-        // We'll use vfsstream to mock a file system with no permissions to
-        // throw an error.
-        $root = vfsStream::setup('root', 0000);
-        $state = ['destination' => $root->url()];
+        $root = vfsStream::setup('no-write', 0000);
 
         $remote = new Remote();
         $result = new Result();
-        $remote->copy($state, $result);
+
+        // State does not have a source property, so there should be a curl error.
+        $remote->copy(['destination' => $root->url() . 'file.txt'], $result);
 
         $this->assertSame(Result::ERROR, $result->getStatus());
-        $this->assertStringContainsString('ailed to open stream', $result->getError());
+        $this->assertStringContainsString('cURL error 3', $result->getError());
     }
 
     /**
