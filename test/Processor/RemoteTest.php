@@ -6,6 +6,8 @@ use Contracts\Mock\Storage\Memory;
 use FileFetcher\FileFetcher;
 use FileFetcher\Processor\Remote;
 use FileFetcherTests\Mock\FakeRemote;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Procrastinator\Result;
@@ -19,10 +21,10 @@ class RemoteTest extends TestCase
     public function testCopyAFileWithRemoteProcessor()
     {
         $config = [
-            "filePath" => 'http://notreal.blah/notacsv.csv',
-            "processors" => [FakeRemote::class]
+            'filePath' => 'http://notreal.blah/notacsv.csv',
+            'processors' => [FakeRemote::class]
         ];
-        $fetcher = FileFetcher::get("1", new Memory(), $config);
+        $fetcher = FileFetcher::get('1', new Memory(), $config);
 
         $fetcher->setTimeLimit(1);
 
@@ -71,5 +73,25 @@ class RemoteTest extends TestCase
 
         $this->assertSame(Result::ERROR, $result->getStatus());
         $this->assertStringContainsString('ailed to open stream', $result->getError());
+    }
+
+    public function test404DoesNotCreateFile()
+    {
+        $root = vfsStream::setup('test404');
+        $root_url = $root->url() . '/bad_file.csv';
+        $state = [
+            'source' => 'http://example.com/bad_file.csv',
+            'destination' => $root_url,
+        ];
+
+        $remote = new Remote();
+        $result = new Result();
+        $remote->copy($state, $result);
+
+        // Assert that there was a 404 error.
+        $this->assertSame(Result::ERROR, $result->getStatus());
+        $this->assertStringContainsString('resulted in a `404 Not Found` response', $result->getError());
+        // Assert that the file was not created.
+        $this->assertFileDoesNotExist($root_url);
     }
 }
