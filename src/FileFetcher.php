@@ -130,9 +130,6 @@ class FileFetcher extends AbstractPersistentJob
         return $processors;
     }
 
-    /**
-     * @return mixed[]
-     */
     private static function getDefaultProcessors(): array
     {
         return [
@@ -163,7 +160,7 @@ class FileFetcher extends AbstractPersistentJob
         return $this->processor;
     }
 
-    private function validateConfig(?array $config): array
+    private function validateConfig($config): array
     {
         if (!is_array($config)) {
             throw new \Exception("Constructor missing expected config filePath.");

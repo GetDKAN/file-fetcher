@@ -50,8 +50,8 @@ class FileFetcherTest extends TestCase
         $state = $fetcher->getState();
 
         $this->assertEquals(
-            basename($state['source']),
-            basename($state['destination'])
+            basename((string) $state['source']),
+            basename((string) $state['destination'])
         );
     }
 
