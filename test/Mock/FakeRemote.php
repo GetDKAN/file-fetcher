@@ -16,12 +16,11 @@ class FakeRemote extends Remote
         return new Client(['handler' => $handlerStack]);
     }
 
-    private function getMockHandler()
+    private function getMockHandler(): MockHandler
     {
-        $mock = new MockHandler([
+        return new MockHandler([
             new Response(200, ['X-Foo' => 'Bar'], 'Hello, World'),
         ]);
-        return $mock;
     }
 
     protected function getFileSize($path): int

@@ -29,7 +29,7 @@ class FileFetcher extends AbstractPersistentJob
      *
      * Stored here so that we don't have to recompute it.
      *
-     * @var \FileFetcher\Processor\ProcessorInterface|null
+     * @var ProcessorInterface|null
      */
     private ?ProcessorInterface $processor = null;
 
@@ -130,7 +130,7 @@ class FileFetcher extends AbstractPersistentJob
         return $processors;
     }
 
-    private static function getDefaultProcessors()
+    private static function getDefaultProcessors(): array
     {
         return [
             Local::class => new Local(),
@@ -141,7 +141,7 @@ class FileFetcher extends AbstractPersistentJob
     /**
      * Get the processor used by this file fetcher object.
      *
-     * @return \FileFetcher\Processor\ProcessorInterface|null
+     * @return ProcessorInterface|null
      *   A processor object, determined by configuration, or NULL if none is
      *   suitable.
      */
@@ -248,7 +248,7 @@ class FileFetcher extends AbstractPersistentJob
      * @param $processorClass
      *   Processor class name.
      *
-     * @return \FileFetcher\Processor\ProcessorInterface|null
+     * @return ProcessorInterface|null
      *   An instance of the processor class. If the given class name does not
      *   exist, or does not implement ProcessorInterface, then null is
      *   returned.
