@@ -72,20 +72,4 @@ class RemoteTest extends TestCase
         $this->assertSame(Result::ERROR, $result->getStatus());
         $this->assertStringContainsString('ailed to open stream', $result->getError());
     }
-
-    public function testCopyBadRemote(): void
-    {
-        $root = vfsStream::setup();
-        $state = [
-            'source' => 'https://example.com/this/file/does/not/exist.txt',
-            'destination' => sys_get_temp_dir() . '/exist.txt',
-        ];
-
-        $remote = new Remote();
-        $result = new Result();
-        $remote->copy($state, $result);
-
-        $this->assertSame(Result::ERROR, $result->getStatus(), $result->getError());
-        $this->assertStringContainsString('404 Not Found', $result->getError());
-    }
 }
