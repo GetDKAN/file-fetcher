@@ -8,12 +8,15 @@ class Local extends ProcessorBase implements ProcessorInterface
 {
     public function isServerCompatible(array $state): bool
     {
-        $path = $state['source'];
+        $path = $state['source'] ?? '';
 
-        if (file_exists($path) && !is_dir($path)) {
-            return true;
+        try {
+            if (file_exists($path) && !is_dir($path)) {
+                return true;
+            }
+        } catch (\Throwable $t) {
+            // If there was an error, then the local file is not available.
         }
-
         return false;
     }
 

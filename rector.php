@@ -10,6 +10,8 @@ use Rector\DeadCode\Rector\Property\RemoveUselessVarTagRector;
 use Rector\Php73\Rector\FuncCall\JsonThrowOnErrorRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddMethodCallBasedStrictParamTypeRector;
+use Rector\TypeDeclaration\Rector\ClassMethod\ArrayShapeFromConstantArrayReturnRector;
 
 return static function (RectorConfig $rectorConfig): void {
 
@@ -19,6 +21,9 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/src',
         __DIR__ . '/test',
     ]);
+
+    // Our base version of PHP.
+    $rectorConfig->phpVersion(PhpVersion::PHP_74);
 
     $rectorConfig->sets([
         // Please no dead code or unneeded variables.
@@ -33,10 +38,12 @@ return static function (RectorConfig $rectorConfig): void {
         // Don't throw errors on JSON parse problems. Yet.
         // @todo Throw errors and deal with them appropriately.
         JsonThrowOnErrorRector::class,
-        // We like our tags.
+        // We like our tags. Please don't remove them.
         RemoveUselessParamTagRector::class,
         RemoveUselessReturnTagRector::class,
         RemoveUselessVarTagRector::class,
+        ArrayShapeFromConstantArrayReturnRector::class,
+        AddMethodCallBasedStrictParamTypeRector::class,
     ]);
 
     $rectorConfig->importNames();
