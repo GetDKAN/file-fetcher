@@ -18,11 +18,8 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/test',
     ]);
 
-    // Our base version of PHP.
-    $rectorConfig->phpVersion(PhpVersion::PHP_74);
-
     $rectorConfig->sets([
-        SetList::PHP_82,
+        SetList::PHP_74,
         // Please no dead code or unneeded variables.
         SetList::DEAD_CODE,
         // Try to figure out type hints.
