@@ -15,7 +15,7 @@
         "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5"
     },
     "require-dev": {
-        "getdkan/contracts": "@stable",
+        "getdkan/contracts": "dev-no-contracts",
         "getdkan/mock-chain": "^1.3.6",
         "mikey179/vfsstream": "^1.6.11",
         "phpunit/phpunit": "^9.6",
