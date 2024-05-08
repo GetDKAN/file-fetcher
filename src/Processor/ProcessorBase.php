@@ -2,10 +2,6 @@
 
 namespace FileFetcher\Processor;
 
-use FileFetcher\PhpFunctionsBridgeTrait;
-use FileFetcher\TemporaryFilePathFromUrl;
-use Procrastinator\Result;
-
 abstract class ProcessorBase
 {
     /**

@@ -2,7 +2,6 @@
 
 namespace FileFetcherTests\Mock;
 
-use FileFetcher\Processor\Local;
 use FileFetcher\Processor\ProcessorInterface;
 use Procrastinator\Result;
 
