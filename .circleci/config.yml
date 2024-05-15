@@ -143,7 +143,7 @@ jobs:
             tag: << parameters.version >>
         parameters:
             version:
-                default: "7.4"
+                default: "8.3"
                 description: The `cimg/php` Docker image version tag.
                 type: string
             install-flags:
@@ -154,7 +154,7 @@ jobs:
             - when:
                   condition:
                       and:
-                          - equal: [ "8.1", <<parameters.version>> ]
+                          - equal: [ "8.3", <<parameters.version>> ]
                           - equal: [ "", <<parameters.install-flags>> ]
                   steps:
                       - run-phpunit-tests:
@@ -164,7 +164,7 @@ jobs:
                   condition:
                       not:
                           and:
-                              - equal: [ "8.1", <<parameters.version>> ]
+                              - equal: [ "8.3", <<parameters.version>> ]
                               - equal: [ "", <<parameters.install-flags>> ]
                   steps:
                       - run-phpunit-tests:
@@ -176,5 +176,5 @@ workflows:
             - matrix-conditions:
                   matrix:
                       parameters:
-                          version: ["7.4", "8.0", "8.1", "8.2"]
+                          version: ["7.4", "8.0", "8.1", "8.2", "8.3"]
                           install-flags: ["", "--prefer-lowest"]
