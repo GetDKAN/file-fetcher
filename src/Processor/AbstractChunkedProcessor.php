@@ -71,7 +71,7 @@ abstract class AbstractChunkedProcessor extends ProcessorBase implements Process
         return ['state' => $state, 'result' => $result];
     }
 
-    private function validateWrite(int $bytesWritten, string $chunk, string $source, string $destination)
+    private function validateWrite(int $bytesWritten, string $chunk, string $source, string $destination): void
     {
         if ($bytesWritten !== strlen($chunk)) {
             throw new \RuntimeException(
