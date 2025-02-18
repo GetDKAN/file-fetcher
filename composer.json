@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4 <8.4",
+        "php": ">=7.4 <8.5",
         "ext-curl": "*",
         "getdkan/procrastinator": "^5.0.3",
         "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5"
