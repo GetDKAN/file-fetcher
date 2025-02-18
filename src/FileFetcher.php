@@ -39,7 +39,7 @@ class FileFetcher extends AbstractPersistentJob
      * We override ::get() because it can set values for both newly constructed
      * objects and re-hydrated ones.
      */
-    public static function get(string $identifier, $storage, array $config = null)
+    public static function get(string $identifier, $storage, ?array $config = null)
     {
         $ff = parent::get($identifier, $storage, $config);
         // If we see that a processor is configured, we need to handle some
@@ -67,7 +67,7 @@ class FileFetcher extends AbstractPersistentJob
      *
      * @see static::get()
      */
-    protected function __construct(string $identifier, $storage, array $config = null)
+    protected function __construct(string $identifier, $storage, ?array $config = null)
     {
         parent::__construct($identifier, $storage);
 
