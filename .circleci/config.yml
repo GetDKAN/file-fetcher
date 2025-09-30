@@ -82,15 +82,6 @@ commands:
                   name: Install XDebug
                   command: sudo -E install-php-extensions xdebug && sudo -E docker-php-ext-enable xdebug
 
-    install-cc-test-reporter:
-        # TODO: Parameterize location.
-        steps:
-            - run:
-                  name: Install Codeclimate test reporter
-                  command: |
-                      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-                      chmod +x ./cc-test-reporter
-
     run-phpunit-tests:
         description: |
             Run PHPUnit tests.
@@ -107,10 +98,10 @@ commands:
                 default: test
                 description: The name of the script within your composer.json which will run your tests.
                 type: string
-            report-to-codeclimate:
+            report-to-qlty:
                 type: boolean
                 default: false
-                description: Report coverage info to Codeclimate.
+                description: Report coverage info to Qlty.sh.
         steps:
             - checkout
             - update-packages:
@@ -118,17 +109,26 @@ commands:
                   cache-key: composer.json
                   install-flags: <<parameters.install-flags>>
             - when:
-                  condition: <<parameters.report-to-codeclimate>>
+                  condition: <<parameters.report-to-qlty>>
                   steps:
-                      - install-xdebug
                       - install-cc-test-reporter
-                      - run: |
-                            ./cc-test-reporter before-build
-                            XDEBUG_MODE=coverage composer <<parameters.test-command>> -- --coverage-clover clover.xml
-                            ./cc-test-reporter after-build --coverage-input-type clover --exit-code $?
+            - run:
+                  name: Run PHPUnit tests
+                  environment:
+                      XDEBUG_MODE: coverage
+                      QLTY_COVERAGE_TOKEN: ${QLTY_COVERAGE_TOKEN}
+                  command: composer <<parameters.test-command>> -- --coverage-clover clover.xml
+            - run:
+                name: Upload coverage report to Qlty.sh
+                command: |
+                  touch ~/.bash_profile
+                  curl https://qlty.sh | sh
+                  source ~/.profile
+                  cd $CIRCLE_WORKING_DIRECTORY
+                  qlty coverage publish clover.xml                  
             - when:
                   condition:
-                      not: <<parameters.report-to-codeclimate>>
+                      not: <<parameters.report-to-qlty>>
                   steps:
                       - run: |
                             XDEBUG_MODE=off composer <<parameters.test-command>>
@@ -154,18 +154,18 @@ jobs:
             - when:
                   condition:
                       and:
-                          - equal: [ "8.3", <<parameters.version>> ]
-                          - equal: [ "", <<parameters.install-flags>> ]
+                          - equal: ["8.3", <<parameters.version>>]
+                          - equal: ["", <<parameters.install-flags>>]
                   steps:
                       - run-phpunit-tests:
-                            report-to-codeclimate: true
+                            report-to-qlty: true
                             install-flags: << parameters.install-flags >>
             - when:
                   condition:
                       not:
                           and:
-                              - equal: [ "8.3", <<parameters.version>> ]
-                              - equal: [ "", <<parameters.install-flags>> ]
+                              - equal: ["8.3", <<parameters.version>>]
+                              - equal: ["", <<parameters.install-flags>>]
                   steps:
                       - run-phpunit-tests:
                             install-flags: << parameters.install-flags >>
