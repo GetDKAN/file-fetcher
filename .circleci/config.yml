@@ -111,6 +111,7 @@ commands:
       - when:
           condition: <<parameters.report-to-qlty>>
           steps:
+            - install-xdebug
             - run:
                 name: Run PHPUnit tests
                 environment:
