@@ -109,8 +109,10 @@ class FileFetcher extends AbstractPersistentJob
             $this->getResult()->setData(json_encode($state));
             $info = $processor->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
             $this->setState($info['state']);
+            return $info['result'];
         }
-        return $info['result'] ?? NULL;
+
+        throw new \Exception("Processor is null, expected a processor. ");
     }
 
     /**
