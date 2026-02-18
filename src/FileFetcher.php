@@ -103,11 +103,16 @@ class FileFetcher extends AbstractPersistentJob
      */
     protected function runIt()
     {
-        $state = $this->getProcessor()->setupState($this->getState());
-        $this->getResult()->setData(json_encode($state));
-        $info = $this->getProcessor()->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
-        $this->setState($info['state']);
-        return $info['result'];
+        $processor = $this->getProcessor();
+        if ($processor) {
+            $state = $processor->setupState($this->getState());
+            $this->getResult()->setData(json_encode($state));
+            $info = $processor->copy($this->getState(), $this->getResult(), $this->getTimeLimit());
+            $this->setState($info['state']);
+            return $info['result'];
+        }
+
+        throw new \Exception("No processor could be found to handle {$this->config['filePath']}.");
     }
 
     /**
