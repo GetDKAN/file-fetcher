@@ -112,7 +112,7 @@ class FileFetcher extends AbstractPersistentJob
             return $info['result'];
         }
 
-        throw new \Exception("Processor is null, expected a processor. ");
+        throw new \Exception("No processor could be found to handle {$this->config['filePath']}.");
     }
 
     /**
