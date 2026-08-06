@@ -251,4 +251,21 @@ class FileFetcherTest extends TestCase
             FakeRemote::class,
         ], $ref_custom_processors->getValue($fetcher));
     }
+
+    public function testRunIt() {
+        $file_fetcher = $this->getMockBuilder(FileFetcher::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getProcessor'])
+            ->getMock();
+        $file_fetcher->expects($this->any())
+            ->method('getProcessor')
+            ->willReturn(NULL);
+
+        $ref_runit = new \ReflectionMethod($file_fetcher, 'runIt');
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('No processor could be found to handle <unknown>.');
+
+        $ref_runit->invoke($file_fetcher);
+    }
 }
