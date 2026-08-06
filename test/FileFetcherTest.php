@@ -262,6 +262,7 @@ class FileFetcherTest extends TestCase
             ->willReturn(NULL);
 
         $ref_runit = new \ReflectionMethod($file_fetcher, 'runIt');
+        $ref_runit->setAccessible(TRUE);
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No processor could be found to handle <unknown>.');
