@@ -111,8 +111,8 @@ class FileFetcher extends AbstractPersistentJob
             $this->setState($info['state']);
             return $info['result'];
         }
-
-        throw new \Exception("No processor could be found to handle {$this->config['filePath']}.");
+        $file_path = json_decode($this->getResult()->getData())->source ?? '<unknown>';
+        throw new \Exception("No processor could be found to handle $file_path.");
     }
 
     /**
