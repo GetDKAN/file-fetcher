@@ -141,7 +141,9 @@ class FileFetcherTest extends TestCase
 
         // What is the processor object?
         $ref_get_processor = new \ReflectionMethod(FileFetcher::class, 'getProcessor');
-        $ref_get_processor->setAccessible(true);
+        if (PHP_VERSION_ID < 80500) {
+            $ref_get_processor->setAccessible(true);
+        }
         $this->assertInstanceOf(
             Local::class,
             $ref_get_processor->invoke($fetcher)
@@ -174,7 +176,9 @@ class FileFetcherTest extends TestCase
         // The list of custom processors should include both custom processors
         // we specified.
         $ref_custom_processors = new \ReflectionProperty($fetcher, 'customProcessorClasses');
-        $ref_custom_processors->setAccessible(true);
+        if (PHP_VERSION_ID < 80500) {
+            $ref_custom_processors->setAccessible(true);
+        }
         $custom_processors = $ref_custom_processors->getValue($fetcher);
         $this->assertContains(FakeProcessor::class, $custom_processors);
         $this->assertContains(FakeLocal::class, $custom_processors);
@@ -208,12 +212,16 @@ class FileFetcherTest extends TestCase
 
         // Contains no custom processors.
         $ref_custom_processors = new \ReflectionProperty($fetcher, 'customProcessorClasses');
-        $ref_custom_processors->setAccessible(true);
+        if (PHP_VERSION_ID < 80500) {
+            $ref_custom_processors->setAccessible(true);
+        }
         $this->assertEmpty($ref_custom_processors->getValue($fetcher));
 
         // Let's add a custom processor.
         $ref_add_processors = new \ReflectionMethod($fetcher, 'addProcessors');
-        $ref_add_processors->setAccessible(true);
+        if (PHP_VERSION_ID < 80500) {
+            $ref_add_processors->setAccessible(true);
+        }
         $ref_add_processors->invokeArgs($fetcher, [[
             'processors' => [
                 FakeProcessor::class,
@@ -262,7 +270,9 @@ class FileFetcherTest extends TestCase
             ->willReturn(NULL);
 
         $ref_runit = new \ReflectionMethod($file_fetcher, 'runIt');
-        $ref_runit->setAccessible(TRUE);
+        if (PHP_VERSION_ID < 80500) {
+            $ref_runit->setAccessible(TRUE);
+        }
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No processor could be found to handle <unknown>.');
